@@ -90,7 +90,7 @@ class Lifterlms_Discord_Addon_Admin {
 		//echo $c_token;
 
 		$client_server_id = isset( $_POST['ets_lifterlms_discord_server_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_server_id'] ) ) : '';
-		echo $client_server_id;
+		echo $client_server_id; 
 
 		
 	
