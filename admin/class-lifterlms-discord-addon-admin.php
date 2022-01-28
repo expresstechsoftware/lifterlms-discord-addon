@@ -60,10 +60,42 @@ class Lifterlms_Discord_Addon_Admin {
 	public function add_admin_menu() {
 		add_submenu_page( 'lifterlms', __( 'Discord Settings', 'lifterlms-discord-addon' ), __( 'Discord Settings', 'lifterlms-discord-addon' ), 'manage_options', 'lifterlms-discord', array( $this, 'ets_lifterlms_discord_setting_page' ) );
 	}
+
+	/*
+	Display application details
+	*/
 	public function ets_lifterlms_discord_setting_page(){
-		echo "ok";
+		require_once LIFTERLMS_PLUGIN_DIR.'admin/partials/pages/lifterlms_application_details.php';
 	}
 
+	public function ets_lifterlms_discord_save_application_details(){
+
+
+		$client_id = isset( $_POST['ets_lifterlms_discord_client_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_id'] ) ) : '';
+		echo $client_id;
+		//$c_id = ($_POST['ets_lifterlms_discord_client_id']);
+		//echo $c_id;
+		$client_secret = isset( $_POST['ets_lifterlms_discord_client_secret'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_secret'] ) ) : '';
+		echo $client_secret;
+		//$c_secret = ($_POST['ets_lifterlms_discord_client_secret']);
+		//echo $c_secret;
+
+		$client_redirect = isset( $_POST['ets_lifterlms_discord_redirect_url'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_url'] ) ) : '';
+		echo $client_secret;
+		//$c_redirect = ($_POST['ets_lifterlms_discord_redirect_url']);
+		//echo $c_redirect;
+		$client_token = isset( $_POST['ets_lifterlms_discord_bot_token'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_bot_token'] ) ) : '';
+		echo $client_token;
+		//$c_token = ($_POST['ets_lifterlms_discord_bot_token']);
+		//echo $c_token;
+
+		$client_server_id = isset( $_POST['ets_lifterlms_discord_server_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_server_id'] ) ) : '';
+		echo $client_server_id;
+
+		
+	
+		
+	}
 	/**
 	 * Register the stylesheets for the admin area.
 	 *

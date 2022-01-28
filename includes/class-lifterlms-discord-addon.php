@@ -153,10 +153,12 @@ class Lifterlms_Discord_Addon {
 	private function define_admin_hooks() {
 		
 		$plugin_admin = new Lifterlms_Discord_Addon_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_post_lifterlms_discord_general_settings', $plugin_admin, 'ets_lifterlms_discord_save_application_details');
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu', 11 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		
 	}
 
 	/**
