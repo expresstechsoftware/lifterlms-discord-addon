@@ -9,11 +9,30 @@
 		<label><?php echo __( 'Client Secret', 'lifterlms-discord-addon' ); ?> :</label>
 		<input type="text" class="ets-input" name="ets_lifterlms_discord_client_secret" value="<?php if ( isset( $discord_client_secret ) ) { echo esc_attr( $discord_client_secret ); } ?>" required placeholder="<?php echo __( 'Discord Client Secret', 'lifterlms-discord-add-on' ); ?>">
 	</div>
+
+
+
+
 	<div class="ets-input-group">
 		<label><?php echo __( 'Redirect URL', 'lifterlms-discord-addon' ); ?> :</label>
 		<input type="text" class="ets-input" name="ets_lifterlms_discord_redirect_url" placeholder="<?php echo __( 'Discord Redirect Url', 'lifterlms-discord-add-on' ); ?>" value="<?php if ( isset( $ets_lifterlms_discord_redirect_url ) ) { echo esc_attr( $ets_lifterlms_discord_redirect_url ); } ?>" required>
 		<p class="description"><?php echo __( 'Registered discord app url', 'lifterlms-discord-add-on' ); ?></p>
 	</div>
+
+	<div class="ets-input-group">
+	    <label><?php echo __( 'Redirect URL', 'lifterlms-discord-addon' ); ?> :</label>
+				<select class ="form-control js-example-tags">
+					<option selected="selected">orange</option>
+					<option value="">Alaska</option>
+					<option value="">purple</option>
+					<option value="">white</option>
+					<option value="">purple</option>
+					<option value="">white</option>
+					<option value="">purple</option>
+				</select>
+    </div>
+
+
 	<div class="ets-input-group">
 		<label><?php echo __( 'Bot Token', 'lifterlms-discord-addon' ); ?> :</label>
 		<input type="text" class="ets-input" name="ets_lifterlms_discord_bot_token" value="<?php if ( isset( $discord_bot_token ) ) { echo esc_attr( $discord_bot_token ); } ?>" required placeholder="<?php echo __( 'Discord Bot Token', 'lifterlms-discord-add-on' ); ?>">
@@ -22,6 +41,7 @@
 		<label><?php echo __( 'Server Id', 'lifterlms-discord-addon' ); ?> :</label>
 		<input type="text" class="ets-input" name="ets_lifterlms_discord_server_id" placeholder="<?php echo __( 'Discord Server Id', 'lifterlms-discord-add-on' ); ?>" value="<?php if ( isset( $ets_lifterlms_discord_server_id ) ) { echo esc_attr( $ets_lifterlms_discord_server_id ); } ?>" required>
 	</div>
+	
 	<?php if ( empty( $ets_lifterlms_discord_client_id ) || empty( $discord_client_secret ) || empty( $discord_bot_token ) || empty( $ets_lifterlms_discord_redirect_url ) || empty( $ets_lifterlms_discord_server_id ) ) { ?>
 		<p class="ets-danger-text description">
 		<?php echo __( 'Please save your form', 'lifterlms-discord-addon' ); ?>

@@ -97,7 +97,9 @@ class Lifterlms_Discord_Addon_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-public.js', array( 'jquery' ), $this->version, false );
+			
 
+		
 	}
 
 }

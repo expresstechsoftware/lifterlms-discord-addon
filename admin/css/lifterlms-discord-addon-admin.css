@@ -35,6 +35,7 @@
     width: 100%;
     margin-bottom: 10px;
   }
+ 
   .ets-input-group label{
     margin-bottom: 10px;
     font-size: 14px;
@@ -477,5 +478,9 @@
   }
   #col_memberpress_joined_date{
     width: 12%;
+  }
+  
+  select{
+    width: 100%;
   }
   
