@@ -69,40 +69,101 @@ class Lifterlms_Discord_Addon_Admin {
 	}
 
 	public function ets_lifterlms_discord_save_application_details(){
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
 
-
-		$client_id = isset( $_POST['ets_lifterlms_discord_client_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_id'] ) ) : '';
-		echo $client_id;
-		//$c_id = ($_POST['ets_lifterlms_discord_client_id']);
-		//echo $c_id;
-		$client_secret = isset( $_POST['ets_lifterlms_discord_client_secret'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_secret'] ) ) : '';
-		echo $client_secret;
-		//$c_secret = ($_POST['ets_lifterlms_discord_client_secret']);
-		//echo $c_secret;
-
-		$client_redirect = isset( $_POST['ets_lifterlms_discord_redirect_url'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_url'] ) ) : '';
-		echo $client_secret;
-		//$c_redirect = ($_POST['ets_lifterlms_discord_redirect_url']);
-		//echo $c_redirect;
-		$client_token = isset( $_POST['ets_lifterlms_discord_bot_token'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_bot_token'] ) ) : '';
-		echo $client_token;
-		//$c_token = ($_POST['ets_lifterlms_discord_bot_token']);
-		//echo $c_token;
-
-		$client_server_id = isset( $_POST['ets_lifterlms_discord_server_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_server_id'] ) ) : '';
-		echo $client_server_id; 
-
+		$ets_lifterlms_discord_client_id = isset( $_POST['ets_lifterlms_discord_client_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_id'] ) ) : '';
+		echo $ets_lifterlms_discord_client_id ;
 		
+		$ets_lifterlms_discord_client_secret = isset( $_POST['ets_lifterlms_discord_client_secret'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_secret'] ) ) : '';
+		echo $ets_lifterlms_discord_client_secret;
+		
+		$ets_lifterlms_discord_client_redirect = isset( $_POST['ets_lifterlms_discord_redirect_url'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_url'] ) ) : '';
+		echo $ets_lifterlms_discord_client_redirect;
+		
+		$ets_lifterlms_discord_bot_token = isset( $_POST['ets_lifterlms_discord_bot_token'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_bot_token'] ) ) : '';
+		echo $ets_lifterlms_discord_bot_token;
+		
+		$ets_lifterlms_discord_server_id = isset( $_POST['ets_lifterlms_discord_server_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_server_id'] ) ) : '';
+		echo $ets_lifterlms_discord_server_id;
+
+
+		/*if ( isset( $_POST['submit'] ) && ! isset( $_POST['ets_lifterlms_discord_role_mapping'] ) ) {
+			if ( isset( $_POST['ets_discord_save_settings'] ) && wp_verify_nonce( $_POST['ets_discord_save_settings'], 'save_discord_settings' ) ) {
+		*/		
+				if ( ets_lifterlms_discord_client_id ) {
+					update_option( 'ets_lifterlms_discord_client_id', $ets_lifterlms_discord_client_id );
+				}
+
+				if ( ets_lifterlms_discord_client_secret ) {
+					update_option( 'ets_lifterlms_discord_client_secret', ets_lifterlms_discord_client_secret );
+				}
+
+				if ( ets_lifterlms_discord_bot_token ) {
+					update_option( 'ets_lifterlms_discord_bot_token', ets_lifterlms_discord_bot_token );
+				}
+
+				if ( ets_lifterlms_discord_redirect_url ) {
+					// add a query string param `via` GH #185.
+					//$ets_memberpress_discord_redirect_url = ets_memberpress_discord_get_memberpress_formated_discord_redirect_url( $ets_memberpress_discord_redirect_url );
+					update_option( 'ets_lifterlms_discord_redirect_url', ets_lifterlms_discord_redirect_url );
+				}
+
+				if ( ets_lifterlms_discord_server_id ) {
+					update_option( 'ets_lifterlms_discord_server_id', ets_lifterlms_discord_server_id );
+				}
+
+				$message = 'Your settings are saved successfully.';
+
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					// This will delete Stale DM channels.
+					delete_metadata( 'user', 0, '_ets_lifterlms_discord_dm_channel', '', true );
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_general_settings';
+					wp_safe_redirect( $pre_location );
+				}
+		
+	  		/* } } } */
+			}	
+	
+
+
+
+	/*	if ( isset( $_POST['ets_discord_save_settings'] ) && wp_verify_nonce( $_POST['ets_discord_save_settings'], 'save_discord_settings' ) ) {
+			if ( ets_lifterlms_discord_client_id ) {
+				update_option( 'ets_lifterlms_discord_client_id', ets_lifterlms_discord_client_id );
+			}
+
+			if ( ets_lifterlms_discord_client_secret) {
+				update_option( 'ets_lifterlms_discord_client_secret', ets_lifterlms_discord_client_secret );
+			}
+
+			if ( $ets_lifterlms_discord_bot_token ) {
+				update_option( 'ets_lifterlms_discord_bot_token', $ets_lifterlms_discord_bot_token );
+			}
+
+			if ( $ets_memberpress_discord_redirect_url ) {
+				// add a query string param `via` GH #185.
+				$ets_memberpress_discord_redirect_url = ets_memberpress_discord_get_memberpress_formated_discord_redirect_url( $ets_memberpress_discord_redirect_url );
+				update_option( 'ets_memberpress_discord_redirect_url', $ets_memberpress_discord_redirect_url );
+			}
+
+			if ( ets_lifterlms_discord_server_id ) {
+				update_option( 'ets_lifterlms_discord_server_id', ets_lifterlms_discord_server_id );
+			}
+
+	}	*/
 	
 		
-	}
+	
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
+	
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
