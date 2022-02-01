@@ -122,41 +122,9 @@ class Lifterlms_Discord_Addon_Admin {
 					delete_metadata( 'user', 0, '_ets_lifterlms_discord_dm_channel', '', true );
 					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_general_settings';
 					wp_safe_redirect( $pre_location );
-				}
-		
-			}
-			
+		 		}
 			}	
-	
-
-
-
-	/*	if ( isset( $_POST['ets_discord_save_settings'] ) && wp_verify_nonce( $_POST['ets_discord_save_settings'], 'save_discord_settings' ) ) {
-			if ( ets_lifterlms_discord_client_id ) {
-				update_option( 'ets_lifterlms_discord_client_id', ets_lifterlms_discord_client_id );
-			}
-
-			if ( ets_lifterlms_discord_client_secret) {
-				update_option( 'ets_lifterlms_discord_client_secret', ets_lifterlms_discord_client_secret );
-			}
-
-			if ( $ets_lifterlms_discord_bot_token ) {
-				update_option( 'ets_lifterlms_discord_bot_token', $ets_lifterlms_discord_bot_token );
-			}
-
-			if ( $ets_memberpress_discord_redirect_url ) {
-				// add a query string param `via` GH #185.
-				$ets_memberpress_discord_redirect_url = ets_memberpress_discord_get_memberpress_formated_discord_redirect_url( $ets_memberpress_discord_redirect_url );
-				update_option( 'ets_memberpress_discord_redirect_url', $ets_memberpress_discord_redirect_url );
-			}
-
-			if ( ets_lifterlms_discord_server_id ) {
-				update_option( 'ets_lifterlms_discord_server_id', ets_lifterlms_discord_server_id );
-			}
-
-	}	*/
-	
-		
+		}	
 	
 	/**
 	 * Register the stylesheets for the admin area.
@@ -178,7 +146,7 @@ class Lifterlms_Discord_Addon_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/lifterlms-discord-addon-admin.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'select2.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name."select2.css", plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), $this->version, 'all' );
 
 	}
 
@@ -200,9 +168,9 @@ class Lifterlms_Discord_Addon_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name.'select2.js', plugin_dir_url( __FILE__ ) . 'js/select2.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name.'select2', plugin_dir_url( __FILE__ ) . 'js/select2.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, true );
+		
 
 	}
 
