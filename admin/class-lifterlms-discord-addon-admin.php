@@ -73,6 +73,7 @@ class Lifterlms_Discord_Addon_Admin {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
 		}
+		
 
 		$ets_lifterlms_discord_client_id = isset( $_POST['ets_lifterlms_discord_client_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_id'] ) ) : '';
 		//echo $ets_lifterlms_discord_client_id ;
@@ -80,7 +81,7 @@ class Lifterlms_Discord_Addon_Admin {
 		$ets_lifterlms_discord_client_secret = isset( $_POST['ets_lifterlms_discord_client_secret'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_secret'] ) ) : '';
 		//echo $ets_lifterlms_discord_client_secret;
 		
-		$ets_lifterlms_discord_redirect_url = isset( $_POST['ets_lifterlms_discord_redirect_url'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_url'] ) ) : '';
+		$ets_lifterlms_discord_redirect_page_id = isset( $_POST['ets_lifterlms_discord_redirect_page_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_page_id'] ) ) : '';
 		//echo $ets_lifterlms_discord_client_redirect;
 		
 		$ets_lifterlms_discord_bot_token = isset( $_POST['ets_lifterlms_discord_bot_token'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_bot_token'] ) ) : '';
@@ -105,10 +106,9 @@ class Lifterlms_Discord_Addon_Admin {
 					update_option( 'ets_lifterlms_discord_bot_token', $ets_lifterlms_discord_bot_token );
 				}
 
-				if ( $ets_lifterlms_discord_redirect_url ) {
+				if ( $ets_lifterlms_discord_redirect_page_id ) {
 					
-					//$ets_memberpress_discord_redirect_url = ets_memberpress_discord_get_memberpress_formated_discord_redirect_url( $ets_memberpress_discord_redirect_url );
-					update_option( 'ets_lifterlms_discord_redirect_url', $ets_lifterlms_discord_redirect_url );
+					update_option( 'ets_lifterlms_discord_redirect_page_id', $ets_lifterlms_discord_redirect_page_id );
 				}
 
 				if ( $ets_lifterlms_discord_server_id ) {

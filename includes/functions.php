@@ -1,5 +1,5 @@
 <?php
-
+// get all wordpress pages
 function ets_learnpress_discord_pages_list( $ets_learnpress_discord_redirect_page_id=false ){
     $args = array(
     'sort_order' => 'asc',
@@ -25,5 +25,20 @@ function ets_learnpress_discord_pages_list( $ets_learnpress_discord_redirect_pag
     
     return $options;
 }
+ /*function ets_get_learnpress_discord_formated_discord_redirect_url(ets_lifterlms_discord_redirect_page_id ) {
+    $url = esc_url( get_permalink( $page_id ) );
+    
+	$parsed = parse_url( $url, PHP_URL_QUERY );
+	if ( $parsed === null ) {
+		return $url .= '?via=learndash-discord';
+	} else {
+		if ( stristr( $url, 'via=learndash-discord' ) !== false ) {
+			return $url;
+		} else {
+			return $url .= '&via=learndash-discord';
+		}
+	}
+}*/
+
 
 ?>
