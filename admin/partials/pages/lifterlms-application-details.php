@@ -2,21 +2,19 @@
 $ets_lifterlms_discord_redirect_page_id = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_redirect_page_id' ) ) );
 $pages = ets_learnpress_discord_pages_list($ets_lifterlms_discord_redirect_page_id);
 $redirect_url = ets_get_learnpress_discord_formated_discord_redirect_url($ets_lifterlms_discord_redirect_page_id);
-echo $redirect_url;
+
 
 $ets_lifterlms_discord_client_id    = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_client_id' ) ) );
-echo $ets_lifterlms_discord_client_id."<br>";
+
 
 $ets_lifterlms_discord_client_secret  = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_client_secret' ) ) );
-echo $ets_lifterlms_discord_client_secret."<br>";
+
 
 $ets_lifterlms_discord_bot_token      = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
-echo $ets_lifterlms_discord_bot_token."<br>";
 
-echo $ets_lifterlms_discord_redirect_page_id."<br>";
 
 $ets_lifterlms_discord_server_id      = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
-echo $ets_lifterlms_discord_server_id."<br>";
+
 ?>
 
 <form method="post" action="<?php echo esc_attr( get_site_url() ) . '/wp-admin/admin-post.php'; ?>">
@@ -60,6 +58,7 @@ echo $ets_lifterlms_discord_server_id."<br>";
 		<button type="submit" name="submit" value="ets_submit" class="ets-submit ets-bg-green">
 		<?php echo __( 'Save Settings', 'lifterlms-discord-addon' ); ?>
 		</button>
+
 		<?php if ( get_option( 'ets_lifterlms_discord_client_id' ) ) : ?>
 		<a href="?action=discord-connectToBot" class="ets-btn btn-connect-to-bot" id="connect-discord-bot"><?php echo __( 'Connect your Bot', 'lifterlms-discord-add-on' ); ?> <i class='fab fa-discord'></i></a>
 		<?php endif; ?>

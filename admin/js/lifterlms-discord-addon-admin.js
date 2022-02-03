@@ -34,4 +34,9 @@
 		//tags: true
 	   });
 
+	   /*Tab options*/
+	$.skeletabs.setDefaults({
+		keyboard: false,
+	});
+
 })( jQuery );
