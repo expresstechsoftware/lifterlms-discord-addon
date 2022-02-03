@@ -34,6 +34,9 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<li class="skltbs-tab-item">
 				   <button class="skltbs-tab" data-identity="lifterlms_advance_settings" ><?php echo __( 'Advanced', 'lifterlms-discord-add-on' ); ?></button>
 				</li>
+				<li class="skltbs-tab-item">
+				   <button class="skltbs-tab" data-identity="lifterlms_documentation_settings" ><?php echo __( 'Documentation', 'lifterlms-discord-add-on' ); ?></button>
+				</li>
 					
 		</ul>
 
@@ -45,6 +48,10 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				</div>	
 				<div id='lifterlms_advance_settings' class="skltbs-panel">
 				   <?php require_once LIFTERLMS_PLUGIN_DIR . 'admin/partials/pages/lifterlms-discord-advance.php'; ?>
+				</div>
+
+				<div id='lifterlms_documentation_settings' class="skltbs-panel">
+				   <?php require_once LIFTERLMS_PLUGIN_DIR . 'admin/partials/pages/lifterlms-discord-documentation.php'; ?>
 				</div>
 			</div>
 		</div>
