@@ -25,7 +25,7 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 ?>
 
 <h1><?php echo __( 'LifterLMS Discord Add On Settings', 'lifterlms-discord-add-on' ); ?></h1>
-		<div id="outer" class="skltbs-theme-light" data-skeletabs='{ "startIndex": 1 }'>
+		<div id="outer" class="skltbs-theme-light" data-skeletabs='{ "startIndex": 0 }'>
 			
 		<ul class="skltbs-tab-group">
 				<li class="skltbs-tab-item">
