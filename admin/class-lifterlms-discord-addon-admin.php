@@ -66,6 +66,7 @@ class Lifterlms_Discord_Addon_Admin {
 	*/
 	public function ets_lifterlms_discord_setting_page(){
 		require_once LIFTERLMS_PLUGIN_DIR.'admin/partials/pages/lifterlms_application_details.php';
+		require_once LIFTERLMS_PLUGIN_DIR.'admin/partials/pages/lifterlms-discord-addon-admin-display.php';
 	}
 
 	public function ets_lifterlms_discord_save_application_details(){
@@ -145,8 +146,13 @@ class Lifterlms_Discord_Addon_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->plugin_name . 'tabs_css', plugin_dir_url( __FILE__ ) . 'css/lifter.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/lifterlms-discord-addon-admin.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name."select2.css", plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), $this->version, 'all' );
+
+
+		
+
 
 	}
 

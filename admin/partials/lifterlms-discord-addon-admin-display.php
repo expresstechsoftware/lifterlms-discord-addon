@@ -14,15 +14,24 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<?php
+if ( isset( $_GET['save_settings_msg'] ) ) {
+	?>
+	<div class="notice notice-success is-dismissible support-success-msg">
+		<p><?php echo esc_html( $_GET['save_settings_msg'] ); ?></p>
+	</div>
+	<?php
+}
+?>
+
 <h1><?php echo __( 'lifterlms Discord Add On Settings', 'lifterlms-discord-add-on' ); ?></h1>
-		<div id="outer" class ="skltbs-theme-light" data-skeletabs='{ "startIndex": 1 }'>
-	
-    <!-- include css file lifter.css here-->
-        <ul class="lifterlms-tab-group">
-				<li class="lifterlms-tab-item">
+		<div id="outer" class="skltbs-theme-light" data-skeletabs='{ "startIndex": 1 }'>
+			
+		<ul class="skltbs-tab-group">
+				<li class="skltbs-tab-item">
 				<button class="skltbs-tab" data-identity="mepr_settings" ><?php echo __( 'Application details', 'lifterlms-discord-add-on' ); ?><span class="initialtab spinner"></span></button>
 				</li>
-				<?php if ( ets_memberpress_discord_check_saved_settings_status() ) : ?>
+				<?php if ( ets_lifterlms_discord_check_saved_settings_status() ) : ?>
 				<li class="skltbs-tab-item">
 				<button class="skltbs-tab" data-identity="level-mapping" ><?php echo __( 'Role Mappings', 'lifterlms-discord-add-on' ); ?></button>
 				</li>
@@ -44,7 +53,7 @@
 				</button>
 				</li>
 			</ul>
-        <!-- create pages....-->    
+
 			<div class="skltbs-panel-group">
 				<div id='mepr_general_settings' class="skltbs-panel">
 				<?php require_once LIFTERLMS_DISCORD_PLUGIN_DIR_PATH . 'admin/partials/pages/lifterlms-discord-settings.php'; ?>
