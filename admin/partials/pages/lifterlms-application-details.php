@@ -2,19 +2,13 @@
 $ets_lifterlms_discord_redirect_page_id = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_redirect_page_id' ) ) );
 $pages = ets_learnpress_discord_pages_list($ets_lifterlms_discord_redirect_page_id);
 $redirect_url = ets_get_learnpress_discord_formated_discord_redirect_url($ets_lifterlms_discord_redirect_page_id);
-
-
 $ets_lifterlms_discord_client_id    = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_client_id' ) ) );
-
 
 $ets_lifterlms_discord_client_secret  = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_client_secret' ) ) );
 
-
 $ets_lifterlms_discord_bot_token      = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
 
-
 $ets_lifterlms_discord_server_id      = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
-
 ?>
 
 <form method="post" action="<?php echo esc_attr( get_site_url() ) . '/wp-admin/admin-post.php'; ?>">
