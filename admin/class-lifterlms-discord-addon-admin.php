@@ -128,31 +128,31 @@ class Lifterlms_Discord_Addon_Admin {
 			exit();
 		}
 
-		$set_job_cnrc = isset( $_POST['set_job_cnrc'] ) ? sanitize_textarea_field( trim( $_POST['set_job_cnrc'] ) ) : '';
+		$set_job_cnrc = isset( $_POST['set_job_cnrc'] ) ? sanitize_textarea_field( $_POST['set_job_cnrc'] ) : '';
 
-		$set_job_q_batch_size = isset( $_POST['set_job_q_batch_size'] ) ? sanitize_textarea_field( trim( $_POST['set_job_q_batch_size'] ) ) : '';
+		$set_job_q_batch_size = isset( $_POST['set_job_q_batch_size'] ) ? sanitize_textarea_field( $_POST['set_job_q_batch_size'] ) : '';
 
-		$retry_api_count = isset( $_POST['retry_api_count'] ) ? sanitize_textarea_field( trim( $_POST['retry_api_count'] ) ) : '';
+		$retry_api_count = isset( $_POST['retry_api_count'] ) ? sanitize_textarea_field( $_POST['retry_api_count'] ) : '';
 
-		$ets_lifterlms_discord_send_expiration_warning_dm = isset( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_send_expiration_warning_dm'] ) ) : false;
+		$ets_lifterlms_discord_send_expiration_warning_dm = isset( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) : false;
 
-		$ets_lifterlms_discord_expiration_warning_message = isset( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_expiration_warning_message'] ) ) : '';
+		$ets_lifterlms_discord_expiration_warning_message = isset( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) : '';
 
-		$ets_lifterlms_discord_send_membership_expired_dm = isset( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_send_membership_expired_dm'] ) ) : false;
+		$ets_lifterlms_discord_send_membership_expired_dm = isset( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) : false;
 
-		$ets_lifterlms_discord_expiration_expired_message = isset( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_expiration_expired_message'] ) ) : '';
+		$ets_lifterlms_discord_expiration_expired_message = isset( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) : '';
 
-		$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_send_welcome_dm'] ) ) : false;
+		$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) : false;
 
-		$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_welcome_message'] ) ) : '';
+		$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_welcome_message'] ) : '';
 
-		$ets_lifterlms_discord_send_membership_cancel_dm = isset( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_send_membership_cancel_dm'] ) ) : '';
+		$ets_lifterlms_discord_send_membership_cancel_dm = isset( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) : '';
 
-		$ets_lifterlms_discord_cancel_message = isset( $_POST['ets_lifterlms_discord_cancel_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_memberpress_discord_cancel_message'] ) ) : '';
+		$ets_lifterlms_discord_cancel_message = isset( $_POST['ets_lifterlms_discord_cancel_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_cancel_message'] ) : '';
 
 
 		if ( isset( $_POST['advance_submit'] ) ) {
-
+			if ( wp_verify_nonce( $_POST['ets_discord_save_adv_settings'], 'save_discord_adv_settings' ) ) {
 				if ( isset( $_POST['upon_failed_payment'] ) ) {
 					update_option( 'ets_lifterlms_discord_payment_failed', true );
 				} 
@@ -239,7 +239,7 @@ class Lifterlms_Discord_Addon_Admin {
 						update_option( 'ets_lifterlms_discord_job_queue_concurrency', $set_job_cnrc );
 					}
 				}
-
+            
 				if ( isset( $_POST['set_job_q_batch_size'] ) ) {
 					if ( $set_job_q_batch_size < 1 ) {
 						update_option( 'ets_lifterlms_discord_job_queue_batch_size', 1 );
@@ -264,6 +264,7 @@ class Lifterlms_Discord_Addon_Admin {
 				}
 			}	
 		}
+	}
 	
 	/**
 	 * Register the stylesheets for the admin area.
