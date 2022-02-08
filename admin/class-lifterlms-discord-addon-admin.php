@@ -129,126 +129,82 @@ class Lifterlms_Discord_Addon_Admin {
 		}
 		if ( wp_verify_nonce( $_POST['ets_discord_save_adv_settings'], 'save_discord_adv_settings' ) ) {
 
-			$set_job_cnrc = isset( $_POST['set_job_cnrc'] ) ? sanitize_textarea_field( $_POST['set_job_cnrc'] ) : '';
-			$set_job_q_batch_size = isset( $_POST['set_job_q_batch_size'] ) ? sanitize_textarea_field( $_POST['set_job_q_batch_size'] ) : '';
-			$retry_api_count = isset( $_POST['retry_api_count'] ) ? sanitize_textarea_field( $_POST['retry_api_count'] ) : '';
-			$ets_lifterlms_discord_send_expiration_warning_dm = isset( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) : false;
-			$ets_lifterlms_discord_expiration_warning_message = isset( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) : '';
-			$ets_lifterlms_discord_send_membership_expired_dm = isset( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) : false;
-			$ets_lifterlms_discord_expiration_expired_message = isset( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) : '';
-			$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) : false;
+			$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) : '';
 			$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_welcome_message'] ) : '';
-			$ets_lifterlms_discord_send_membership_cancel_dm = isset( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) : '';
-			$ets_lifterlms_discord_cancel_message = isset( $_POST['ets_lifterlms_discord_cancel_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_cancel_message'] ) : '';
+			$ets_lifterlms_discord_kick_upon_disconnect = isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) : '';
+			$ets_lifterlms_discord_retry_failed_api = isset( $_POST['ets_lifterlms_discord_retry_failed_api'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_retry_failed_api'] ) : '';
+			$ets_lifterlms_discord_retry_api_count = isset( $_POST['ets_lifterlms_discord_retry_api_count'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_retry_api_count'] ) : '';
+			$ets_lifterlms_discord_job_queue_concurrency = isset( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) : '';
+			$ets_lifterlms_discord_job_queue_batch_size = isset( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) : '';
+			$ets_lifterlms_discord_log_api_response = isset( $_POST['ets_lifterlms_discord_log_api_response'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_log_api_response'] ) : '';
+			
 
+		if ( isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', false );
+			}
 
-				if ( isset( $_POST['upon_failed_payment'] ) ) {
-					update_option( 'ets_lifterlms_discord_payment_failed', true );
-				} 
-				else {
-					update_option( 'ets_lifterlms_discord_payment_failed', false );
-				}
+		if ( isset( $_POST['ets_lifterlms_discord_welcome_message'] ) && $_POST['ets_lifterlms_discord_welcome_message'] != '' ) {
+				update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_welcome_message', 'Your membership is expiring' );
+			}
 
-				if ( isset( $_POST['log_api_res'] ) ) {
-					update_option( 'ets_lifterlms_discord_log_api_response', true );
+		if ( isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', false );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_retry_failed_api'] ) ) {
+				update_option( 'ets_lifterlms_discord_retry_failed_api', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_retry_failed_api', false );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_retry_api_count'] ) ) {
+				if ( $ets_lifterlms_discord_retry_api_count < 1 ) {
+					update_option( 'ets_lifterlms_discord_retry_api_count', 1 );
 				} else {
-					update_option( 'ets_lifterlms_discord_log_api_response', false );
+					update_option( 'ets_lifterlms_discord_retry_api_count', $ets_lifterlms_discord_retry_api_count );
 				}
+			}
 
-
-				if ( isset( $_POST['retry_failed_api'] ) ) {
-					update_option( 'ets_lifterlms_retry_failed_api', true );
+		if ( isset( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) ) {
+				if ( $ets_lifterlms_discord_job_queue_concurrency < 1 )
+				 {
+					update_option( 'ets_lifterlms_discord_job_queue_concurrency', 1 );
 				} 
 				else {
-					update_option( 'ets_lifterlms_retry_failed_api', false );
+					update_option( 'ets_lifterlms_discord_job_queue_concurrency', $ets_lifterlms_discord_job_queue_concurrency );
 				}
-
-
-				if ( isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) {
-					update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
-				} else {
-					update_option( 'ets_lifterlms_discord_send_welcome_dm', false );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_send_expiration_warning_dm'] ) ) {
-					update_option( 'ets_lifterlms_discord_send_expiration_warning_dm', true );
-				}
-				 else {
-					update_option( 'ets_lifterlms_discord_send_expiration_warning_dm', false );
-				}
-
-
-				if ( isset( $_POST['ets_lifterlms_discord_welcome_message'] ) && $_POST['ets_lifterlms_discord_welcome_message'] != '' ) {
-					update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
-				} 
-				else {
-					update_option( 'ets_lifterlms_discord_expiration_warning_message', 'Your membership is expiring' );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_expiration_warning_message'] ) && $_POST['ets_lifterlms_discord_expiration_warning_message'] != '' ) {
-					update_option( 'ets_lifterlms_discord_expiration_warning_message', $ets_lifterlms_discord_expiration_warning_message );
-				}
-				else {
-					update_option( 'ets_lifterlms_discord_expiration_warning_message', 'Your membership is expiring' );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_expiration_expired_message'] ) && $_POST['ets_lifterlms_discord_expiration_expired_message'] != '' ) {
-					update_option( 'ets_lifterlms_discord_expiration_expired_message', $ets_lifterlms_discord_expiration_expired_message );
-				}
-				 else {
-					update_option( 'ets_lifterlms_discord_expiration_expired_message', 'Your membership is expired' );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_send_membership_expired_dm'] ) ) {
-					update_option( 'ets_lifterlms_discord_send_membership_expired_dm', true );
-				} 
-				else {
-					update_option( 'ets_lifterlms_discord_send_membership_expired_dm', false );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_send_membership_cancel_dm'] ) ) {
-					update_option( 'ets_lifterlms_discord_send_membership_cancel_dm', true );
-				} 
-				else {
-					update_option( 'ets_lifterlms_discord_send_membership_cancel_dm', false );
-				}
-
-				if ( isset( $_POST['ets_lifterlms_discord_cancel_message'] ) && $_POST['ets_lifterlms_discord_cancel_message'] != '' ) {
-					update_option( 'ets_lifterlms_discord_cancel_message', $ets_lifterlms_discord_cancel_message );
-				} else {
-					update_option( 'ets_lifterlms_discord_cancel_message', 'Your membership is canceled' );
-				}
-
-				if ( isset( $_POST['set_job_cnrc'] ) ) {
-					if ( $set_job_cnrc < 1 )
-					 {
-						update_option( 'ets_lifterlms_discord_job_queue_concurrency', 1 );
-					} 
-					else {
-						update_option( 'ets_lifterlms_discord_job_queue_concurrency', $set_job_cnrc );
-					}
-				}
-            
-				if ( isset( $_POST['set_job_q_batch_size'] ) ) {
-					if ( $set_job_q_batch_size < 1 ) {
+			}
+		if ( isset( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) ) {
+					if ( $ets_lifterlms_discord_job_queue_batch_size < 1 ) {
 						update_option( 'ets_lifterlms_discord_job_queue_batch_size', 1 );
 					} 
 					else {
-						update_option( 'ets_lifterlms_discord_job_queue_batch_size', $set_job_q_batch_size );
+						update_option( 'ets_lifterlms_discord_job_queue_batch_size', $ets_lifterlms_discord_job_queue_batch_size );
 					}
 				}
 
-				if ( isset( $_POST['retry_api_count'] ) ) {
-					if ( $retry_api_count < 1 ) {
-						update_option( 'ets_lifterlms_retry_api_count', 1 );
-					} else {
-						update_option( 'ets_lifterlms_retry_api_count', $retry_api_count );
-					}
+		if ( isset( $_POST['ets_lifterlms_discord_log_api_response'] ) ) {
+					update_option( 'ets_lifterlms_discord_log_api_response', true );
 				}
+				 else {
+					update_option( 'ets_lifterlms_discord_log_api_response', false );
+				}
+				
+				
 				$message = 'Your settings are saved successfully.';
 
-				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_advance';
+			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#lifterlms_advance_settings';
 					wp_safe_redirect( $pre_location );
 				}
 			}		

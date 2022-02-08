@@ -1,20 +1,14 @@
 <?php
-$upon_failed_payment   =   sanitize_text_field( get_option( 'upon_failed_payment' ));
-$log_api_res           =   sanitize_text_field( get_option( 'log_api_res' ) );
-$retry_failed_api      =   sanitize_text_field( get_option( 'retry_failed_api' ));
-$set_job_cnrc          =   sanitize_text_field( get_option( 'set_job_cnrc' ));
-$set_job_q_batch_size      = sanitize_text_field( get_option( 'set_job_q_batch_size' ) );
-$retry_api_count           = sanitize_text_field( get_option( 'retry_api_count' ) );
 
-$ets_lifterlms_discord_send_expiration_warning_dm = sanitize_text_field( get_option( 'ets_lifterlms_discord_send_expiration_warning_dm' ) );
-$ets_lifterlms_discord_expiration_warning_message = sanitize_text_field( get_option( 'ets_lifterlms_discord_expiration_warning_message' ) );
-$ets_lifterlms_discord_expired_message            = sanitize_text_field( get_option( 'ets_lifterlms_discord_expired_message' ) );
-$ets_lifterlms_discord_send_membership_expired_dm = sanitize_text_field( get_option( 'ets_lifterlms_discord_send_membership_expired_dm' ) );
-$ets_lifterlms_discord_expiration_expired_message = sanitize_text_field( get_option( 'ets_lifterlms_discord_expiration_expired_message' ) );
-$ets_lifterlms_discord_send_welcome_dm            = sanitize_text_field( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) );
-$ets_lifterlms_discord_welcome_message            = sanitize_text_field( get_option( 'ets_lifterlms_discord_welcome_message' ) );
-$ets_lifterlms_discord_send_membership_cancel_dm  = sanitize_text_field( get_option( 'ets_lifterlms_discord_send_membership_cancel_dm' ) );
-$ets_lifterlms_discord_cancel_message             = sanitize_text_field( get_option( 'ets_lifterlms_discord_cancel_message' ) );
+$ets_lifterlms_discord_send_welcome_dm            =   sanitize_text_field( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) );
+$ets_lifterlms_discord_welcome_message            =   sanitize_text_field( get_option( 'ets_lifterlms_discord_welcome_message' ) );
+$ets_lifterlms_discord_kick_upon_disconnect       =   sanitize_text_field( get_option( 'ets_lifterlms_discord_kick_upon_disconnect' ) );
+$ets_lifterlms_discord_retry_failed_api           =   sanitize_text_field( get_option( 'ets_lifterlms_discord_retry_failed_api' ));
+$ets_lifterlms_discord_retry_api_count            =   sanitize_text_field( get_option( 'ets_lifterlms_discord_retry_api_count' ) );
+$ets_lifterlms_discord_job_queue_concurrency      =   sanitize_text_field( get_option( 'ets_lifterlms_discord_job_queue_concurrency' ));
+$ets_lifterlms_discord_job_queue_batch_size       =   sanitize_text_field( get_option( 'ets_lifterlms_discord_job_queue_batch_size' ) );
+$ets_lifterlms_discord_log_api_response           =   sanitize_text_field( get_option( 'ets_lifterlms_discord_log_api_response' ) );
+
 ?>
 
 <form method="post" action="<?php echo esc_attr( get_site_url() ) . '/wp-admin/admin-post.php' ?>">
@@ -23,17 +17,8 @@ $ets_lifterlms_discord_cancel_message             = sanitize_text_field( get_opt
  
 <table class="form-table" role="presentation">
 	<tbody>
-	 <tr>
-		<th scope="row"><?php echo __( 'Shortcode:', 'lifterlms-discord-add-on' ); ?></th>
-	    <td> <fieldset>
-                    [mepr_discord_button]
-                    <br/>
-                    <small><?php echo __( 'Use this shortcode to display Discord Connect button anywhere on your website, Optionally you can make your redirect url to that page on which the button shortcode is being added.', 'lifterlms-discord-add-on' ); ?></small>
-		    </fieldset>
-        </td>
-	 </tr>
-
-
+	 
+<!-- ets_lifterlms_discord_send_welcome_dm-->
     <tr>
 		<th scope="row"><?php echo __( 'Send welcome message', 'lifterlms-discord-add-on' ); ?></th>
         <td> 
@@ -47,143 +32,76 @@ $ets_lifterlms_discord_cancel_message             = sanitize_text_field( get_opt
             </fieldset>
         </td>
 	</tr> 
-<!-- Membership welcome........-->
+
+
+<!-- Welcome message........-->
     <tr>
-		<th scope="row"><?php echo __( 'LifterLMS welcome message', 'lifterlms-discord-add-on' ); ?></th>
+		<th scope="row"><?php echo __( 'Welcome message', 'lifterlms-discord-add-on' ); ?></th>
 		<td> 
             <fieldset>
                     <textarea class="ets_lifterlms_discord_dm_textarea" name="ets_lifterlms_discord_welcome_message" id="ets_lifterlms_discord_welcome_message" row="25" cols="50"><?php if ( $ets_lifterlms_discord_welcome_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_welcome_message ) ) ); } ?></textarea> 
                     <br/>
-                    <small>Merge fields: [MEMBER_USERNAME], [MEMBER_EMAIL], [MEMBERSHIP_LEVEL], [SITE_URL], [BLOG_NAME], [MEMBERSHIP_ENDDATE], [MEMBERSHIP_STARTDATE]</small>
+                    <small>Merge fields: [USERNAME], [EMAIL], [LEVEL], [SITE_URL], [BLOG_NAME], [ENDDATE], [STARTDATE]</small>
 		    </fieldset>
         </td>
 	</tr>
-<!--Send Membership........-->
+
+<!--Do not kick students upon disconnect........-->
     <tr>
-		<th scope="row"><?php echo __( 'Send LifterLMS expiration warning message', 'lifterlms-discord-add-on' ); ?></th>
+		<th scope="row"><?php echo __( 'Do not kick students upon disconnect', 'lifterlms-discord-add-on' ); ?></th>
             <td> 
                 <fieldset>
-                    <input name="ets_lifterlms_discord_send_expiration_warning_dm" type="checkbox" id="ets_lifterlms_discord_send_expiration_warning_dm" 
+                    <input name="ets_lifterlms_discord_kick_upon_disconnect" type="checkbox" id="ets_lifterlms_discord_kick_upon_disconnect" 
                     <?php
-                    if ( $ets_lifterlms_discord_send_expiration_warning_dm == true ) {
+                    if ( $ets_lifterlms_discord_kick_upon_disconnect == true ) {
                         echo 'checked="checked"'; }
                     ?>
                      value="1">
 		        </fieldset>
             </td>
 	  </tr>
-<!--Membership Expiration warning.......-->
-    <tr>
-		<th scope="row"><?php echo __( 'Lifterlms expiration warning message', 'lifterlms-discord-add-on' ); ?></th>
-		<td>
-            <fieldset>
-                    <textarea  class="ets_lifterlms_discord_dm_textarea" name="ets_lifterlms_discord_expiration_warning_message" id="ets_lifterlms_discord_expiration_warning_message" row="25" cols="50"><?php if ( $ets_lifterlms_discord_expiration_warning_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_expiration_warning_message ) ) ); } ?></textarea> 
-                    <br/>
-                    <small>Merge fields: [MEMBER_USERNAME], [MEMBER_EMAIL], [MEMBERSHIP_LEVEL], [SITE_URL], [BLOG_NAME], [MEMBERSHIP_ENDDATE], [MEMBERSHIP_STARTDATE]</small>
-		    </fieldset>
-        </td>
-	</tr>
-<!--Membership Expiration massage.......-->
-    <tr>
-		<th scope="row"><?php echo __( 'Send LifterLMS expired message', 'lifterlms-discord-add-on' ); ?></th>
-		<td>
-            <fieldset>
-                    <input name="ets_lifterlms_discord_send_membership_expired_dm" type="checkbox" id="ets_lifterlms_discord_send_membership_expired_dm" 
-                    <?php
-                    if ( $ets_lifterlms_discord_send_membership_expired_dm == true ) {
-                        echo 'checked="checked"'; }
-                    ?>
-                    value="1">
-		    </fieldset>
-        </td>
-	</tr>
-<!--Membership Expired massage.......-->
-
-<tr>
-	<th scope="row"><?php echo __( 'LifterLMS expired message', 'lifterlms-discord-add-on' ); ?></th>
-	<td> 
-        <fieldset>
-                <textarea  class="ets_lifterlms_discord_dm_textarea" name="ets_lifterlms_discord_expiration_expired_message" id="ets_lifterlms_discord_expiration_expired_message" row="25" cols="50"><?php if ( $ets_lifterlms_discord_expiration_expired_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_expiration_expired_message ) ) ); } ?></textarea> 
-                <br/>
-                <small>Merge fields: [MEMBER_USERNAME], [MEMBER_EMAIL], [MEMBERSHIP_LEVEL], [SITE_URL], [BLOG_NAME]</small>
-		</fieldset>
-  </td>
-</tr>
-<!--Send Membership cancel massage.......-->
-<tr>
-	<th scope="row"><?php echo __( 'Send LifterLMS cancel message', 'lifterlms-discord-add-on' ); ?></th>
-	<td> 
-            <fieldset>
-                    <input name="ets_lifterlms_discord_send_membership_cancel_dm" type="checkbox" id="ets_lifterlms_discord_send_membership_cancel_dm" 
-                    <?php
-                    if ( $ets_lifterlms_discord_send_membership_cancel_dm == true ) {
-                        echo 'checked="checked"'; }
-                    ?>
-                    value="1">
-		    </fieldset>
-    </td>
-</tr>
-<!--Membership cancel massage.......-->
-<tr>
-		<th scope="row"><?php echo __( 'LifterLMS cancel message', 'lifterlms-discord-add-on' ); ?></th>
-		<td> 
-            <fieldset>
-                    <textarea  class="ets_lifterlms_discord_dm_textarea" name="ets_lifterlms_discord_cancel_message" id="ets_lifterlms_discord_cancel_message" row="25" cols="50"><?php if ( $ets_lifterlms_discord_cancel_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_cancel_message ) ) ); } ?></textarea> 
-                    <br/>
-                    <small>Merge fields: [MEMBER_USERNAME], [MEMBER_EMAIL], [MEMBERSHIP_LEVEL], [SITE_URL], [BLOG_NAME]</small>
-		    </fieldset>
-        </td>
-</tr>
-<!--Re-assign roles upon .......-->
-<tr>
-	<th scope="row"><?php echo __( 'Re-assign roles upon payment failure', 'lifterlms-discord-add-on' ); ?></th>
-	<td> 
-        <fieldset>
-                <input name="upon_failed_payment" type="checkbox" id="upon_failed_payment" 
-                    <?php
-                    if ( $upon_failed_payment == true ) {
-                        echo 'checked="checked"'; }
-                    ?>
-                value="1">
-		</fieldset>
-    </td>
-</tr>
 <!--Retry failed API calls .......-->
 <tr>
-       <th scope="row"><?php echo __( 'Retry Failed API calls', 'lifterlms-discord-add-on' ); ?></th>
+	<th scope="row"><?php echo __( 'Retry Failed API calls', 'lifterlms-discord-add-on' ); ?></th>
 	<td> 
         <fieldset>
-                <input name="retry_failed_api" type="checkbox" id="retry_failed_api" 
-                <?php
-                    if ( $retry_failed_api == true ) {
+                <input name="ets_lifterlms_discord_retry_failed_api" type="checkbox" id="ets_lifterlms_discord_retry_failed_api" 
+                    <?php
+                    if ( $ets_lifterlms_discord_retry_failed_api == true ) {
                         echo 'checked="checked"'; }
                     ?>
                 value="1">
 		</fieldset>
     </td>
 </tr>
-<!--API call .......-->
+
+<!--How many times a failed API call should get re-try .......-->
 <tr>
 	<th scope="row"><?php echo __( 'How many times a failed API call should get re-try', 'lifterlms-discord-add-on' ); ?></th>
 	<td> 
         <fieldset>
-		     <input name="retry_api_count" type="number" min="1" id="ets_lifterlms_retry_api_count" value="<?php if ( isset( $retry_api_count ) ) { echo esc_attr( $retry_api_count ); } else { echo 1; } ?>">
+		     <input name="ets_lifterlms_discord_retry_api_count" type="number" min="1" id="ets_lifterlms_discord_retry_api_count" value="<?php if ( isset( $retry_api_count ) ) { echo esc_attr( $retry_api_count ); } else { echo 1; } ?>">
 		</fieldset>
     </td>
 </tr> 
+
+<!--ets_lifterlms_discord_job_queue_concurrency .......-->
+
 <tr>
 	<th scope="row"><?php echo __( 'Set job queue concurrency', 'lifterlms-discord-add-on' ); ?></th>
 	<td> 
         <fieldset>
-		     <input name="set_job_cnrc" type="number" min="1" id="set_job_cnrc" value="<?php if ( isset( $set_job_cnrc ) ) { echo esc_attr( $set_job_cnrc ); } else { echo 1; } ?>">
+		     <input name="ets_lifterlms_discord_job_queue_concurrency" type="number" min="1" id="ets_lifterlms_discord_job_queue_concurrency" value="<?php if ( isset( $set_job_cnrc ) ) { echo esc_attr( $set_job_cnrc ); } else { echo 1; } ?>">
 		</fieldset>
     </td>
 </tr>
+
+
 <tr>
 	<th scope="row"><?php echo __( 'Set job queue batch size', 'lifterlms-discord-add-on' ); ?></th>
 	<td> 
         <fieldset>
-		      <input name="set_job_q_batch_size" type="number" min="1" id="set_job_q_batch_size" value="<?php if ( isset( $set_job_q_batch_size ) ) { echo esc_attr( $set_job_q_batch_size ); } else { echo 10; } ?>">
+		      <input name="ets_lifterlms_discord_job_queue_batch_size" type="number" min="1" id="ets_lifterlms_discord_job_queue_batch_size" value="<?php if ( isset( $set_job_q_batch_size ) ) { echo esc_attr( $set_job_q_batch_size ); } else { echo 10; } ?>">
 		</fieldset>
     </td>
 </tr>
@@ -192,9 +110,9 @@ $ets_lifterlms_discord_cancel_message             = sanitize_text_field( get_opt
 	<th scope="row"><?php echo __( 'Log API calls response (For debugging purpose)', 'lifterlms-discord-add-on' ); ?></th>
 	<td> 
         <fieldset>
-                <input name="log_api_res" type="checkbox" id="log_api_res" 
+                <input name="ets_lifterlms_discord_log_api_response" type="checkbox" id="ets_lifterlms_discord_log_api_response" 
                     <?php
-                    if ( $log_api_res == true ) {
+                    if ( $ets_lifterlms_discord_log_api_response == true ) {
                         echo 'checked="checked"'; }
                     ?>
                 value="1">
@@ -209,6 +127,5 @@ $ets_lifterlms_discord_cancel_message             = sanitize_text_field( get_opt
 	  <?php echo __( 'Save Settings', 'lifterlms-discord-add-on' ); ?>
 	</button>
 </div>
-
 
 </form>
