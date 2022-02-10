@@ -48,9 +48,7 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 
 				<li class="skltbs-tab-item">
 				   <button class="skltbs-tab" data-identity="lifterlms_get_Support_settings" ><?php echo __( 'Support', 'lifterlms-discord-add-on' ); ?></button>
-				</li>
-
-				
+				</li>		
 					
 		</ul>
 

@@ -253,9 +253,43 @@ class Lifterlms_Discord_Addon_Admin {
 		 */
 		wp_enqueue_script( $this->plugin_name.'skeletabs.js', plugin_dir_url( __FILE__ ) . 'js/skeletabs.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name.'select2', plugin_dir_url( __FILE__ ) . 'js/select2.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, true );
-		
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, true );	
+		$script_params = array(
+			'admin_ajax'                    => admin_url( 'admin-ajax.php' ),
+			'permissions_const'             => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
+			'is_admin'                      => is_admin(),
+			'ets_lifterlms_discord_nonce' => wp_create_nonce( 'ets-lifterlms-discord-ajax-nonce' ),
+		);
 
+		wp_localize_script( $this->plugin_name, 'ets_lifterlms_param', $script_params );
 	}
 
+		public function ets_lifterlms_discord_discord_api_callback() {
+
+			if ( isset( $_GET['action'] ) && 'mepr-discord-connectToBot' === $_GET['action'] ) {
+				$params                    = array(
+					'client_id'   => sanitize_text_field( get_option( 'ets_lifterlms_discord_client_id' )),
+					'permissions' => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
+					'scope'       => 'bot',
+					'guild_id'    => sanitize_text_field( get_option( 'ets_lifterlms_discord_server_id' )),
+				);
+
+				$discord_authorise_api_url = LIFTERLMS_DISCORD_API_URL . 'oauth2/authorize?' . http_build_query( $params );
+
+				wp_redirect( $discord_authorise_api_url, 302, get_site_url() );
+				exit;
+		}
+	}
 }
+	 /*  public function ets_lifterlms_load_discord_roles() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+		// Check for nonce security.
+		if ( ! wp_verify_nonce( $_POST['ets_lifterlms_discord_nonce'], 'ets-lifterlms-discord-ajax-nonce' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+
+     }*/

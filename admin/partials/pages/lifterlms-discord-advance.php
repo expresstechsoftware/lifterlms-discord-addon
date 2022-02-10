@@ -41,7 +41,7 @@ $ets_lifterlms_discord_log_api_response           =   sanitize_text_field( get_o
             <fieldset>
                     <textarea class="ets_lifterlms_discord_dm_textarea" name="ets_lifterlms_discord_welcome_message" id="ets_lifterlms_discord_welcome_message" row="25" cols="50"><?php if ( $ets_lifterlms_discord_welcome_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_welcome_message ) ) ); } ?></textarea> 
                     <br/>
-                    <small>Merge fields: [USERNAME], [EMAIL], [LEVEL], [SITE_URL], [BLOG_NAME], [ENDDATE], [STARTDATE]</small>
+                    <small>Merge fields: Hi [LP_STUDENT_NAME] ([LP_STUDENT_EMAIL]), Welcome, Your courses [LP_COURSES],'</small>
 		    </fieldset>
         </td>
 	</tr>

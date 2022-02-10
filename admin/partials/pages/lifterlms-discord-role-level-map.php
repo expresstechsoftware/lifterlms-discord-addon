@@ -1,4 +1,3 @@
 <?php
-echo "hello mappp";
-
+echo "demo page";
 ?>

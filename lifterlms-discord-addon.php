@@ -38,6 +38,14 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'LIFTERLMS_DISCORD_ADDON_VERSION', '1.0.0' );
 
 define('LIFTERLMS_PLUGIN_DIR',plugin_dir_path(__FILE__));
+
+
+/**
+ * Discord BOT Permissions
+ */
+define( 'LIFTERLMS_DISCORD_BOT_PERMISSIONS', 8 );
+
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-lifterlms-discord-addon-activator.php
