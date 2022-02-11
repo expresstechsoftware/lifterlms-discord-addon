@@ -160,6 +160,8 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action( 'wp_ajax_lifterlms_load_discord_roles', $plugin_admin, 'ets_lifterlms_load_discord_roles' );
 		$this->loader->add_action( 'admin_post_lifterlms_discord_general_settings', $plugin_admin, 'ets_lifterlms_discord_save_application_details');
 		$this->loader->add_action( 'admin_post_lifterlms_discord_advance_settings', $plugin_admin, 'ets_lifterlms_discord_advance_settings');
+		$this->loader->add_action( 'admin_post_lifterlms_discord_role_mapping', $plugin_admin, 'ets_lifterlms_discord_role_mapping' );
+		
 		$this->loader->add_action( 'init', $plugin_admin, 'ets_lifterlms_discord_discord_api_callback' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu', 11 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );

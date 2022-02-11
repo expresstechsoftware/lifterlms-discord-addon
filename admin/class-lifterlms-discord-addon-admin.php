@@ -114,7 +114,57 @@ class Lifterlms_Discord_Addon_Admin {
 					wp_safe_redirect( $pre_location );
 		 		}
 			}	
-		}	
+		}
+		
+		/**
+	 * Save plugin general settings.
+	 *
+	 * @since    1.0.0
+	 */
+
+
+	public function ets_lifterlms_discord_role_mapping() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+
+		$ets_discord_roles = isset( $_POST['ets_lifterlms_discord_role_mapping'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_role_mapping'] ) ) : '';
+
+		$ets_lifterlms_discord_default_role_id = isset( $_POST['defaultRole'] ) ? sanitize_textarea_field( trim( $_POST['defaultRole'] ) ) : '';
+
+		$allow_none_member = isset( $_POST['allow_none_member'] ) ? sanitize_textarea_field( trim( $_POST['allow_none_member'] ) ) : '';
+
+		$ets_discord_roles   = stripslashes( $ets_discord_roles );
+		$save_mapping_status = update_option( 'ets_lifterlms_discord_role_mapping', $ets_discord_roles );
+		if ( isset( $_POST['ets_lifterlms_discord_role_mappings_nonce'] ) && wp_verify_nonce( $_POST['ets_lifterlms_discord_role_mappings_nonce'], 'discord_role_mappings_nonce' ) ) {
+			if ( ( $save_mapping_status || isset( $_POST['ets_lifterlms_discord_role_mapping'] ) ) && ! isset( $_POST['flush'] ) ) {
+				if ( $ets_lifterlms_discord_default_role_id ) {
+					update_option( 'ets_lifterlms_discord_default_role_id', $ets_lifterlms_discord_default_role_id );
+				}
+
+				if ( $allow_none_member ) {
+					update_option( 'ets_lifterlms_allow_none_member', $allow_none_member );
+				}
+
+				$message = 'Your mappings are saved successfully.';
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_role_mapping';
+					wp_safe_redirect( $pre_location );
+				}
+			}
+			if ( isset( $_POST['flush'] ) ) {
+				delete_option( 'ets_lifterlms_discord_role_mapping' );
+				delete_option( 'ets_lifterlms_discord_default_role_id' );
+				delete_option( 'ets_lifterlms_allow_none_member' );
+				$message = ' Your settings flushed successfully.';
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_role_mapping';
+					wp_safe_redirect( $pre_location );
+				}
+			}
+		}
+	}
 
 	/**
 	 * Save plugin Advance settings.
@@ -323,6 +373,32 @@ class Lifterlms_Discord_Addon_Admin {
 
      }
 
-}	 
+	/* public function ets_memberpress_discord_as_schedule_job_membership_level_deleted( $level_id ) {
+		if ( get_post_type( $level_id ) == 'lifterlmsproduct' ) {
+			global $wpdb;
+			$result                         = $wpdb->get_results( $wpdb->prepare( 'SELECT `user_id`, `trans_num`, `created_at`, `expires_at` FROM ' . $wpdb->prefix . 'mepr_transactions' . ' WHERE `product_id` = %d GROUP BY `user_id`', array( $level_id ) ) );
+			$ets_pmpor_discord_role_mapping = json_decode( get_option( 'ets_memberpress_discord_role_mapping' ), true );
+			foreach ( $result as $key => $transaction ) {
+				$user_id              = $transaction->user_id;
+				$access_token         = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_memberpress_discord_access_token', true ) ) );
+				$cancelled_membership = array();
+				if ( ! empty( $transaction ) ) {
+						$cancelled_membership = array(
+							'product_id' => $level_id,
+							'txn_number' => $transaction->trans_num,
+							'created_at' => $transaction->created_at,
+							'expires_at' => $transaction->expires_at,
+						);
+				}
+				if ( $cancelled_membership && $access_token ) {
+					as_schedule_single_action( ets_memberpress_discord_get_random_timestamp( ets_memberpress_discord_get_highest_last_attempt_timestamp() ), 'ets_memberpress_discord_as_handle_memberpress_cancelled', array( $user_id, $cancelled_membership ), MEMBERPRESS_DISCORD_AS_GROUP_NAME );
+				}
+			}
+		}
+	}
+*/
+
+}// admin
+
 
 	 ?>
