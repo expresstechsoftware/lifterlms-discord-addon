@@ -33,7 +33,7 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				</li>
 
 				<li class="skltbs-tab-item">
-				   <button class="skltbs-tab" data-identity="lifterlms_role_level_Support_settings" ><?php echo __( 'Role Mapping', 'lifterlms-discord-add-on' ); ?></button>
+				   <button class="skltbs-tab" style="display:none" data-identity="lifterlms_role_level_Support_settings" ><?php echo __( 'Role Mapping', 'lifterlms-discord-add-on' ); ?></button>
 				</li>
 
 				<li class="skltbs-tab-item">

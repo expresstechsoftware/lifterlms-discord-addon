@@ -258,7 +258,7 @@ class Lifterlms_Discord_Addon_Admin {
 			'admin_ajax'                    => admin_url( 'admin-ajax.php' ),
 			'permissions_const'             => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
 			'is_admin'                      => is_admin(),
-			'ets_lifterlms_discord_nonce' => wp_create_nonce( 'ets-lifterlms-discord-ajax-nonce' ),
+			'ets_lifterlms_discord_nonce'   => wp_create_nonce( 'ets-lifterlms-discord-ajax-nonce' ),
 		);
 
 		wp_localize_script( $this->plugin_name, 'ets_lifterlms_param', $script_params );
@@ -266,6 +266,7 @@ class Lifterlms_Discord_Addon_Admin {
 
 		public function ets_lifterlms_discord_discord_api_callback() {
 
+			if ( is_user_logged_in() ) {
 			if ( isset( $_GET['action'] ) && 'mepr-discord-connectToBot' === $_GET['action'] ) {
 				$params                    = array(
 					'client_id'   => sanitize_text_field( get_option( 'ets_lifterlms_discord_client_id' )),
@@ -278,10 +279,11 @@ class Lifterlms_Discord_Addon_Admin {
 
 				wp_redirect( $discord_authorise_api_url, 302, get_site_url() );
 				exit;
+			}
 		}
 	}
-}
-	 /*  public function ets_lifterlms_load_discord_roles() {
+
+	   public function ets_lifterlms_load_discord_roles() {
 		if ( ! current_user_can( 'administrator' ) ) {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
@@ -291,5 +293,36 @@ class Lifterlms_Discord_Addon_Admin {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
 		}
+		$server_id         = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
+		$discord_bot_token = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		if ( $server_id && $discord_bot_token ) {
+			$discod_server_roles_api = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $server_id . '/roles';
+			$guild_args              = array(
+				'method'  => 'GET',
+				'headers' => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Bot ' . $discord_bot_token,
+				),
+			);
+			
+			$guild_response          = wp_remote_get( $discod_server_roles_api, $guild_args );
+			$response_arr = json_decode( wp_remote_retrieve_body( $guild_response ), true );
+			if ( is_array( $response_arr ) && ! empty( $response_arr ) ) {
+				if ( array_key_exists( 'code', $response_arr ) || array_key_exists( 'error', $response_arr ) ) {
+					//write_api_response_logs( $response_arr, $user_id, debug_backtrace()[0] );
+				} else {
+					foreach ( $response_arr as $key => $value ) {
 
-     }*/
+					}
+				}
+				return wp_send_json( $response_arr );
+			}
+
+		}
+
+
+     }
+
+}	 
+
+	 ?>

@@ -39,6 +39,7 @@ define( 'LIFTERLMS_DISCORD_ADDON_VERSION', '1.0.0' );
 
 define('LIFTERLMS_PLUGIN_DIR',plugin_dir_path(__FILE__));
 
+define('LIFTERLMS_DISCORD_API_URL','https://discord.com/api/v6/');
 
 /**
  * Discord BOT Permissions
