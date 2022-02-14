@@ -1,9 +1,11 @@
 <?php
 $user_id             = sanitize_text_field( trim( get_current_user_id() ) );
-$mpr_memberships        = get_posts( array('post_type' => 'lifterlmsproduct', 'post_status' => 'publish') );
+$mpr_lifterlms        = get_posts( array('post_type' => 'lifterlmsproduct', 'post_status' => 'publish') );
 $default_role        = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
 $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
 ?>
+ <!-- Drag and Drop the Discord Roles  -->
+
 <div class="notice notice-warning ets-notice">
 	<p><i class='fas fa-info'></i> <?php echo __( 'Drag and Drop the Discord Roles over to the lifterlms Levels', 'lifterlms-discord-add-on' ); ?></p>
 </div>
@@ -18,12 +20,12 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 		</div>
 	</div>
 
-	<div class="ets-column">
+<div class="ets-column">
 		<h2><?php echo __( 'Lifterlms ', 'lifterlms-discord-add-on' ); ?></h2>
 		<hr>
-		<div class="memberpress-levels">
+		<div class="lifterlms-levels">
 			<?php
-			foreach ( array_reverse( $mpr_memberships ) as $key => $value ) {
+			foreach ( array_reverse( $mpr_lifterlms ) as $key => $value ) {
 				?>
 				<div class="makeMeDroppable" data-level_id="<?php echo esc_attr( $value->ID ); ?>" ><span><?php echo esc_html( $value->post_title ); ?></span></div>
 				<?php
@@ -32,6 +34,8 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 		</div>
 	</div>
 </div>
+
+
 <form method="post" action="<?php echo esc_attr( get_site_url() ) . '/wp-admin/admin-post.php' ?>">
 	<input type="hidden" name="action" value="lifterlms_discord_role_mapping">
 	<table class="form-table" role="presentation">
@@ -47,6 +51,8 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 			<p class="description"><?php echo __( 'This Role will be assigned to all level members', 'lifterlms-discord-add-on' ); ?></p>
 			</td>
 		</tr>
+
+        
 		<tr>
 		<th scope="row"><label><?php echo __( 'Allow non-members', 'lifterlms-discord-add-on' ); ?></label></th>
 		<td>

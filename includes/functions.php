@@ -40,5 +40,9 @@ function ets_learnpress_discord_pages_list( $ets_learnpress_discord_redirect_pag
 	}
 }
 
+function ets_lifterlms_discord_get_formatted_dm( $user_id, $membership, $message ) {
+	$ets_lifterlms_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
+}	
+
 
 ?>

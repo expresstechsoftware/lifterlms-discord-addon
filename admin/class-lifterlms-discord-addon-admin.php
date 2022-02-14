@@ -343,6 +343,9 @@ class Lifterlms_Discord_Addon_Admin {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
 		}
+
+
+
 		$server_id         = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
 		$discord_bot_token = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
 		if ( $server_id && $discord_bot_token ) {
@@ -361,8 +364,23 @@ class Lifterlms_Discord_Addon_Admin {
 				if ( array_key_exists( 'code', $response_arr ) || array_key_exists( 'error', $response_arr ) ) {
 					//write_api_response_logs( $response_arr, $user_id, debug_backtrace()[0] );
 				} else {
-					foreach ( $response_arr as $key => $value ) {
+					$response_arr['previous_mapping'] = get_option( 'ets_lifterlms_discord_role_mapping' );
 
+
+					$discord_roles = array();
+
+					foreach ( $response_arr as $key => $value ) {
+						$isbot = false;
+						if ( is_array( $value ) ) {
+							if ( array_key_exists( 'tags', $value ) ) {
+								if ( array_key_exists( 'bot_id', $value['tags'] ) ) {
+									$isbot = true;
+								}
+							}
+						}
+						if ( 'previous_mapping' !== $key && false === $isbot && isset( $value['name'] ) && $value['name'] != '@everyone' ) {
+							$discord_roles[ $value['id'] ] = $value['name'];
+						}
 					}
 				}
 				return wp_send_json( $response_arr );
