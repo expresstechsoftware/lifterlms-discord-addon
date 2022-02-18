@@ -1,6 +1,17 @@
 <?php
 $user_id             = sanitize_text_field( trim( get_current_user_id() ) );
-$mpr_lifterlms        = get_posts( array('post_type' => 'lifterlmsproduct', 'post_status' => 'publish') );
+
+$mpr_lifterlms        = get_posts( 
+	                       array(
+							'post_type' => 'Course', 
+						    'post_status' => 'publish')
+                         );
+
+// $post = get_post(array('post_type' => 'course', 'post_status' => 'publish'));
+// echo $post->post_title."<br>";
+// echo $post->ID;
+						 
+ 
 $default_role        = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
 $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
 ?>
@@ -12,7 +23,7 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 
 
 <div class="row-container">
-	<div class="ets-column discord-roles-col">
+	<div class="discord-roles-col">
 		<h2><?php echo __( 'Discord Roles', 'lifterlms-discord-add-on' ); ?></h2>
 		<hr>
 		<div class="discord-roles">
@@ -20,16 +31,16 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 		</div>
 	</div>
 
-<div class="ets-column">
-		<h2><?php echo __( 'Lifterlms ', 'lifterlms-discord-add-on' ); ?></h2>
+    <div class="ets-column">
+		<h2><?php echo __( 'Lifterlms_Courses ', 'lifterlms-discord-add-on' ); ?></h2>
 		<hr>
-		<div class="lifterlms-levels">
+		<div class="lifterlms-courses">
 			<?php
-			foreach ( array_reverse( $mpr_lifterlms ) as $key => $value ) {
+			  foreach ( array_reverse( $mpr_lifterlms ) as $key => $value ) {
 				?>
-				<div class="makeMeDroppable" data-level_id="<?php echo esc_attr( $value->ID ); ?>" ><span><?php echo esc_html( $value->post_title ); ?></span></div>
+				<div class="makeMeDroppable" data-course_id="<?php echo esc_attr( $value->ID ); ?>" ><span><?php echo esc_html( $value->post_title ); ?></span></div>
 				<?php
-			}
+			 }
 			?>
 		</div>
 	</div>
@@ -76,6 +87,8 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 	</tbody>
 	</table>
 	<br>
+
+
 	<div class="mapping-json">
 	<textarea id="maaping_json_val" name="ets_lifterlms_discord_role_mapping">
 	<?php
@@ -84,11 +97,13 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 	?>
 	</textarea>
   </div>
+
+
   <div class="bottom-btn">
 	<button type="submit" name="submit" value="ets_submit" class="ets-submit ets-bg-green">
 	  <?php echo __( 'Save Settings', 'lifterlms-discord-add-on' ); ?>
 	</button>
-	<button id="MemberPressRevertMapping" name="flush" class="ets-submit ets-bg-red">
+	<button id="lifterlmsRevertMapping" name="flush" class="ets-submit ets-bg-red">
 	  <?php echo __( 'Flush Mappings', 'lifterlms-discord-add-on' ); ?>
 	</button>
   </div>

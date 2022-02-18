@@ -165,7 +165,8 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu', 11 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		
+		$this->loader->add_action( 'before_delete_post', $plugin_admin, 'ets_lifterlms_discord_as_schedule_job_membership_level_deleted' );
+		$this->loader->add_action( 'ets_lifterlms_discord_as_handler_lifterlms_complete_transaction', $plugin_admin, 'ets_lifterlms_discord_as_handler_lifterlms_complete_transaction', 10, 2 );
 	}
 
 	/**
@@ -178,10 +179,13 @@ class Lifterlms_Discord_Addon {
 	private function define_public_hooks() {
 
 		$plugin_public = new Lifterlms_Discord_Addon_Public( $this->get_plugin_name(), $this->get_version() );
-
+		
+	
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		//$this->loader->add_shortcode( 'mepr_discord_button', $plugin_public, 'ets_lifterlms_discord_add_connect_button');
+		$this->loader->add_action( 'ets_lifterlms_discord_as_handler_add_member_to_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_add_member_to_guild', 10, 4 );
+	    $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'ets_lifterlms_discord_add_connect_button' );
 	}
 
 	/**
