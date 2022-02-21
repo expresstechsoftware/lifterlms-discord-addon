@@ -90,6 +90,7 @@
 
 			/*Create droppable element*/
 			function init() {
+				console.log("ok");
 				$('.makeMeDroppable').droppable({
 					drop: handleDropEvent,
 					hoverClass: 'hoverActive',
@@ -113,8 +114,6 @@
 					}
 				});
 			}
-
-
 
 			function handlePreviousDropEvent(event, ui) {
 				var draggable = ui.draggable;

@@ -65,6 +65,8 @@ class Lifterlms_Discord_Addon_Admin {
 	Display application details
 	*/
 	public function ets_lifterlms_discord_setting_page(){
+		wp_enqueue_script( 'jquery-ui-draggable' );
+		wp_enqueue_script( 'jquery-ui-droppable' );
 		require_once LIFTERLMS_PLUGIN_DIR.'admin/partials/lifterlms-discord-addon-admin-display.php';
 	}
 
@@ -390,55 +392,6 @@ class Lifterlms_Discord_Addon_Admin {
 
      }
 	}
-
-
-	
-	function ets_lifterlms_discord_as_schedule_job_membership_level_deleted( $level_id ) {
-			if ( get_post_type( $level_id ) == 'Course' ) {
-				global $wpdb;
-				$result                         = $wpdb->get_results( $wpdb->prepare( 'SELECT `user_id`, `trans_num`, `created_at`, `expires_at` FROM ' . $wpdb->prefix . 'mepr_transactions' . ' WHERE `product_id` = %d GROUP BY `user_id`', array( $level_id ) ) );
-				$ets_pmpor_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
-				foreach ( $result as $key => $transaction ) {
-					$user_id              = $transaction->user_id;
-					$access_token         = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_access_token', true ) ) );
-					$cancelled_membership = array();
-					if ( ! empty( $transaction ) ) {
-							$cancelled_membership = array(
-								'product_id' => $level_id,
-								'txn_number' => $transaction->trans_num,
-								'created_at' => $transaction->created_at,
-								'expires_at' => $transaction->expires_at,
-							);
-					}
-					if ( $cancelled_membership && $access_token ) {
-						as_schedule_single_action( ets_memberpress_discord_get_random_timestamp( ets_memberpress_discord_get_highest_last_attempt_timestamp() ), 'ets_memberpress_discord_as_handle_memberpress_cancelled', array( $user_id, $cancelled_membership ), MEMBERPRESS_DISCORD_AS_GROUP_NAME );
-					}
-				}
-			}
-		}
-
-		public function ets_lifterlms_discord_as_handler_lifterlms_complete_transaction( $user_id, $complete_txn ) {
-			$memberpress_discord                     = new Memberpress_Discord();
-			$plugin_public                           = new Memberpress_Discord_Public( $memberpress_discord->get_plugin_name(), $memberpress_discord->get_version() );
-			$ets_lifterlms_discord_role_mapping    = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
-			$default_role                            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
-			
-			if ( is_array( $ets_memberpress_discord_role_mapping ) && array_key_exists( 'level_id_' . $complete_txn['product_id'], $ets_memberpress_discord_role_mapping ) ) {
-				$mapped_role_id = sanitize_text_field( trim( $ets_memberpress_discord_role_mapping[ 'level_id_' . $complete_txn['product_id'] ] ) );
-				if ( $mapped_role_id ) {
-					$plugin_public->put_discord_role_api( $user_id, $mapped_role_id, true );
-					$assigned_role = array(
-						'role_id'    => $mapped_role_id,
-						'product_id' => $complete_txn['product_id'],
-					);
-					update_user_meta( $user_id, '_ets_memberpress_discord_role_id_for_' . $complete_txn['txn_number'], $assigned_role );
-					
-				}
-			}
-
-
-		} //complete function
-	
 	} // admin
 	?>
 
