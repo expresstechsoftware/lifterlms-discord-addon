@@ -116,22 +116,82 @@ class Lifterlms_Discord_Addon_Public {
 		$ets_lifterlms_discord_role_mapping   = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
 		$mapped_role_names                    = array();
-		if ( $active_memberships && is_array( $all_roles ) ) {
-			foreach ( $active_memberships as $active_membership ) {
-				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'level_id_' . $active_membership->product_id, $ets_lifterlms_discord_role_mapping ) ) {
-					$mapped_role_id = $ets_lifterlms_discord_role_mapping[ 'level_id_' . $active_membership->product_id ];
-					if ( array_key_exists( $mapped_role_id, $all_roles ) ) {
-						array_push( $mapped_role_names, $all_roles[ $mapped_role_id ] );
+
+		//$courses = get_course_id();
+
+		print_r($all_roles);
+		//print_r($courses);
+
+
+		// if ( $courses && is_array( $all_roles ) ) {
+		// 	foreach ( $active_memberships as $active_membership ) {
+		// 		if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id' . $active_membership->product_id, $ets_lifterlms_discord_role_mapping ) ) {
+		// 			$mapped_role_id = $ets_lifterlms_discord_role_mapping[ 'course_id' . $active_membership->product_id ];
+		// 			if ( array_key_exists( $mapped_role_id, $all_roles ) ) {
+		// 				array_push( $mapped_role_names, $all_roles[ $mapped_role_id ] );
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		// $default_role_name = '';
+		// if ( 'none' !== $default_role && is_array( $all_roles ) && array_key_exists( $default_role, $all_roles ) ) {
+		// 	$default_role_name = $all_roles[ $default_role ];
+		// }
+
+		//if ( ets_lifterlms_discord_check_saved_settings_status() ) {
+			if ( $access_token ) {
+				?>
+				<label class="ets-connection-lbl"><?php echo __( 'Discord connection', 'lifterlms-discord-add-on' ); ?></label>
+				<a href="#" class="ets-btn btn-disconnect" id="disconnect-discord" data-user-id="<?php echo esc_attr( $user_id ); ?>"><?php echo __( 'Disconnect From Discord ', 'lifterlms-discord-add-on' ); ?><i class='fab fa-discord'></i></a>
+				<span class="ets-spinner"></span>
+				<?php
+			} elseif ( current_user_can( 'lifterlms_authorized' ) && $mapped_role_names || $allow_none_member == 'yes' ) {
+				?>
+				</br>
+				<label class="ets-connection-lbl"><?php echo __( 'Discord connection', 'lifterlms-discord-add-on' ); ?></label>
+				<a href="?action=lifterlms-discord-login" class="btn-connect ets-btn" ><?php echo __( 'Connect To Discord', 'lifterlms-discord-add-on' ); ?> <i class='fab fa-discord'></i></a>
+				
+				<?php if ( $mapped_role_names ) { ?>
+					<p class="ets_assigned_role">
+					<?php
+					echo __( 'Following Roles will be assigned to you in Discord: ', 'lifterlms-discord-add-on' );
+					foreach ( $mapped_role_names as $mapped_role_name ) {
+						echo esc_html( $mapped_role_name ) . ', ';
 					}
-				}
+					if ( $default_role_name ) {
+						echo esc_html( $default_role_name );
+					}
+					?>
+					</p>
+				<?php } ?>
+				
+				<?php
 			}
-		}
+		//
+
 
 	}
 
 	public function ets_memberpress_show_discord_button() {
 		echo do_shortcode( '[mepr_discord_button]' );
 	}
+
+	public function ets_lifterlms_discord_discord_api_callback() {
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			if ( isset( $_GET['action'] ) && 'lifterlms-discord-login' === $_GET['action'] ) {
+				$params                    = array(
+					'client_id'     => sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_client_id' ) ) ),
+					'redirect_uri'  => sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_redirect_url' ) ) ),
+					'response_type' => 'code',
+					'scope'         => 'identify email connections guilds guilds.join messages.read',
+				);
+				$discord_authorise_api_url = LIFTERLMS_DISCORD_API_URL . 'oauth2/authorize?' . http_build_query( $params );
+ 
+				wp_redirect( $discord_authorise_api_url, 302, get_site_url() );
+				exit;
+			}
 
 
 	

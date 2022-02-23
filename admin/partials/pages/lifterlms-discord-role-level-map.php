@@ -14,6 +14,9 @@ $mpr_lifterlms        = get_posts(
  
 $default_role        = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
 $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
+
+$role_mapping = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_role_mapping' ) ) );
+
 ?>
  <!-- Drag and Drop the Discord Roles  -->
 
@@ -93,7 +96,8 @@ $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow
 	<textarea id="maaping_json_val" name="ets_lifterlms_discord_role_mapping">
 	<?php
 	if ( isset( $ets_discord_roles ) ) {
-		echo esc_html( $ets_discord_roles );}
+		echo esc_html( $ets_discord_roles );
+	}
 	?>
 	</textarea>
   </div>

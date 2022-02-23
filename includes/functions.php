@@ -46,7 +46,7 @@ function ets_lifterlms_discord_get_formatted_dm( $user_id, $membership, $message
 	$user_obj                             = get_user_by( 'id', $user_id );
 	$ets_lifterlms_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
 	$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
-	$mapped_role_id                       = $ets_memberpress_discord_role_mapping[ 'level_id_' . $membership['product_id'] ];
+	$mapped_role_id                       = $ets_memberpress_discord_role_mapping[ 'course_id_' . $membership['product_id'] ];
 	
 
     if ( is_array( $all_roles ) && array_key_exists( $mapped_role_id, $all_roles ) ) {
