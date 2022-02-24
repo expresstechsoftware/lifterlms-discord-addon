@@ -51,7 +51,7 @@ $ets_lifterlms_discord_server_id      = sanitize_text_field( get_option( 'ets_li
 		</button>
 
 		<?php if ( get_option( 'ets_lifterlms_discord_client_id' ) ) :?>
-			<a href="?action=mepr-discord-connectToBot" class="ets-btn btn-connect-to-bot" id="connect-discord-bot"><?php echo __( 'Connect your Bot', 'lifterlms-discord-add-on' ); ?> <i class='fab fa-discord'></i></a>
+			<a href="?action=discord-connectToBot" class="ets-btn btn-connect-to-bot" id="connect-discord-bot"><?php echo __( 'Connect your Bot', 'lifterlms-discord-add-on' ); ?> <i class='fab fa-discord'></i></a>
 		<?php endif; ?>
 	</p>
 </form>
