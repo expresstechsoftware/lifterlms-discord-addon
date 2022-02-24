@@ -31,7 +31,7 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<li class="skltbs-tab-item">
 				   <button class="skltbs-tab" data-identity="lifterlms_settings" ><?php echo __( 'Application Details', 'lifterlms-discord-add-on' ); ?><span class="initialtab spinner"></span></button>
 				</li>
-				<?php if ( ets_lifterlms_discord_check_saved_settings_status() ) : ?>
+				
 				<li class="skltbs-tab-item">
 				   <button class="skltbs-tab" style="display:none" data-identity="lifterlms_role_level_Support_settings" ><?php echo __( 'Role Mapping', 'lifterlms-discord-add-on' ); ?></button>
 				</li>
@@ -58,7 +58,7 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<div id='lifterlms_general_settings' class="skltbs-panel">
 				   <?php require_once LIFTERLMS_PLUGIN_DIR . 'admin/partials/pages/lifterlms-application-details.php'; ?>
 				</div>	
-				<?php if ( ets_lifterlms_discord_check_saved_settings_status() ) : ?>
+				
 				<div id='lifterlms_role_level_Support_settings' class="skltbs-panel">
 				   <?php require_once LIFTERLMS_PLUGIN_DIR . 'admin/partials/pages/lifterlms-discord-role-level-map.php'; ?>
 				</div>
@@ -77,9 +77,5 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<div id='lifterlms_get_Support_settings' class="skltbs-panel">
 				   <?php require_once LIFTERLMS_PLUGIN_DIR . 'admin/partials/pages/lifterlms-discord-get-support.php'; ?>
 				</div>
-
-
-				
-
 			</div>
 		</div>
