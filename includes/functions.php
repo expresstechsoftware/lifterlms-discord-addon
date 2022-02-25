@@ -55,7 +55,22 @@ function ets_lifterlms_discord_get_formatted_dm( $user_id, $membership, $message
 		$MEMBERSHIP_LEVEL = '';
 	}
 
-}	
+}	// ets_lifterlms_discord_redirect_page_id
+function ets_lifterlms_discord_check_saved_settings_status() {
+	$ets_lifterlms_discord_client_id     = get_option( 'ets_lifterlms_discord_client_id' );
+	$ets_lifterlms_discord_client_secret = get_option( 'ets_lifterlms_discord_client_secret' );
+	$ets_lifterlms_discord_bot_token     = get_option( 'ets_lifterlms_discord_bot_token' );
+	$ets_lifterlms_discord_redirect_url  = get_option( 'ets_lifterlms_discord_redirect_url' );
+	$ets_lifterlms_discord_server_id     = get_option( 'ets_lifterlms_discord_server_id' );
+
+	if ( $ets_lifterlms_discord_client_id && $ets_lifterlms_discord_client_secret && $ets_lifterlms_discord_bot_token && $ets_lifterlms_discord_redirect_url && $ets_lifterlms_discord_server_id ) {
+			$status = true;
+	} else {
+			$status = false;
+	}
+
+		return $status;
+}
 
 
 ?>

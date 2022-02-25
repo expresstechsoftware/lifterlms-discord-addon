@@ -1,21 +1,14 @@
 <?php
 $user_id             = sanitize_text_field( trim( get_current_user_id() ) );
-
 $mpr_lifterlms        = get_posts( 
 	                       array(
-							'post_type' => 'Course', 
+							'post_type' => 'course', 
 						    'post_status' => 'publish')
                          );
-
-// $post = get_post(array('post_type' => 'course', 'post_status' => 'publish'));
-// echo $post->post_title."<br>";
-// echo $post->ID;
-						 
- 
+$ets_discord_roles = get_option( 'ets_lifterlms_discord_role_mapping' );
 $default_role        = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
 $allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
-
-$role_mapping = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_role_mapping' ) ) );
+//$role_mapping = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_role_mapping' ) ) );
 
 ?>
  <!-- Drag and Drop the Discord Roles  -->
