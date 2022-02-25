@@ -222,12 +222,11 @@ class Lifterlms_Discord_Addon_Public {
 					if ( is_array( $res_body ) ) {
 						if ( array_key_exists( 'access_token', $res_body ) ) {
 							
-							$access_token = sanitize_text_field( trim( $res_body['access_token'] ) );
-							
+							$access_token = sanitize_text_field( $res_body['access_token'] );
 							update_user_meta( $user_id, '_ets_lifterlms_discord_access_token', $access_token );
 							
 							if ( array_key_exists( 'refresh_token', $res_body ) ) {
-								$refresh_token = sanitize_text_field( trim( $res_body['refresh_token'] ) );
+								$refresh_token = sanitize_text_field( $res_body['refresh_token'] );
 								update_user_meta( $user_id, '_ets_lifterlms_discord_refresh_token', $refresh_token );
 							}
 
@@ -238,7 +237,24 @@ class Lifterlms_Discord_Addon_Public {
 								$token_expiry_time = $date->getTimestamp();
 								update_user_meta( $user_id, '_ets_lifterlms_discord_expires_in', $token_expiry_time );
 							}
-					       // code 
+					       // Not call............. 
+						  // $user_body = $this->get_discord_current_user( $access_token );
+
+						   if ( is_array( $user_body ) && array_key_exists( 'discriminator', $user_body ) ) {
+							$discord_user_number           = $user_body['discriminator'];
+							$discord_user_name             = $user_body['username'];
+							$discord_user_name_with_number = $discord_user_name . '#' . $discord_user_number;
+							update_user_meta( $user_id, '_ets_lifterlms_discord_username', $discord_user_name_with_number );
+						  }
+
+						  if ( is_array( $user_body ) && array_key_exists( 'id', $user_body ) ) {
+
+							$_ets_lifterlms_discord_user_id = sanitize_text_field( trim( $user_body['id'] ) );
+							
+							
+							update_user_meta( $user_id, '_ets_memberpress_discord_user_id', $_ets_memberpress_discord_user_id );
+							//$this->ets_memberpress_discord_add_member_in_guild( $_ets_memberpress_discord_user_id, $user_id, $access_token, $active_memberships );
+						}
 
 						}
 					}
