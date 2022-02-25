@@ -238,7 +238,7 @@ class Lifterlms_Discord_Addon_Public {
 								update_user_meta( $user_id, '_ets_lifterlms_discord_expires_in', $token_expiry_time );
 							}
 					       // Not call............. 
-						  // $user_body = $this->get_discord_current_user( $access_token );
+						   $user_body = $this->get_discord_current_user( $access_token );
 
 						   if ( is_array( $user_body ) && array_key_exists( 'discriminator', $user_body ) ) {
 							$discord_user_number           = $user_body['discriminator'];
@@ -249,12 +249,17 @@ class Lifterlms_Discord_Addon_Public {
 
 						  if ( is_array( $user_body ) && array_key_exists( 'id', $user_body ) ) {
 
-							$_ets_lifterlms_discord_user_id = sanitize_text_field( trim( $user_body['id'] ) );
+							$_ets_lifterlms_discord_user_id = sanitize_text_field( $user_body['id'] );
 							
-							
-							update_user_meta( $user_id, '_ets_memberpress_discord_user_id', $_ets_memberpress_discord_user_id );
-							//$this->ets_memberpress_discord_add_member_in_guild( $_ets_memberpress_discord_user_id, $user_id, $access_token, $active_memberships );
-						}
+							if ( $discord_exist_user_id === $_ets_lifterlms_discord_user_id ) {
+									if ( ! empty( $_ets_lifterlms_discord_role_id ) && $_ets_lifterlms_discord_role_id['role_id'] != 'none' ) {
+										$this->memberpress_delete_discord_role( $user_id, $_ets_lifterlms_discord_role_id['role_id'] );
+									}
+								
+							}
+							update_user_meta( $user_id, '_ets_lifterlms_discord_user_id', $_ets_lifterlms_discord_user_id );
+							$this->ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+						} 
 
 						}
 					}
@@ -264,6 +269,25 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 	}
+
+	public function ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized user', 401 );
+			exit();
+		}
+
+		$allow_none_member = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
+		if ('yes' === $allow_none_member ) {
+			// It is possible that we may exhaust API rate limit while adding members to guild, so handling off the job to queue.
+			as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_as_handle_add_member_to_guild', array( $_ets_lifterlms_discord_user_id, $user_id, $access_token ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
+		}
+	}
+
+
+
+
+
+
 
 	/**
 	 * Create authentication token for discord API
@@ -361,6 +385,38 @@ class Lifterlms_Discord_Addon_Public {
 		);
 		echo wp_json_encode( $event_res );
 		die();
+	}
+
+	/**
+	 * Get Discord user details from API
+	 *
+	 * @param STRING $access_token
+	 * @return OBJECT REST API response
+	 */
+
+	public function get_discord_current_user( $access_token ) {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized user', 401 );
+			exit();
+		}
+		$user_id = get_current_user_id();
+
+		$discord_cuser_api_url = LIFTERLMS_DISCORD_API_URL . 'users/@me';
+		$param                 = array(
+			'headers' => array(
+				'Content-Type'  => 'application/x-www-form-urlencoded',
+				'Authorization' => 'Bearer ' . $access_token,
+			),
+		);
+		$user_response         = wp_remote_get( $discord_cuser_api_url, $param );
+		ets_lifterlms_discord_log_api_response( $user_id, $discord_cuser_api_url, $param, $user_response );
+
+		$response_arr = json_decode( wp_remote_retrieve_body( $user_response ), true );
+		write_api_response_logs( $response_arr, $user_id, debug_backtrace()[0] );
+		$user_body = json_decode( wp_remote_retrieve_body( $user_response ), true );
+		return $user_body;
+
+
 	}
 
 

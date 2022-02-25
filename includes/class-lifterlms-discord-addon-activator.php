@@ -30,6 +30,7 @@ class Lifterlms_Discord_Addon_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		update_option( 'ets_lifterlms_allow_none_member', 'yes' );
 
 	}
 
