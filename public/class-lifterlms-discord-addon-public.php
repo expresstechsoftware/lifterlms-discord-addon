@@ -123,12 +123,8 @@ class Lifterlms_Discord_Addon_Public {
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
 		$mapped_role_names                    = array();
 
-		//print_r($user_id)."</br>";
-		//print_r($default_role );
 		$courses = $student->get_courses(array('limit'=>1999));
-		print_r($courses);
 		if ( $courses && is_array( $all_roles ) ) {
-			echo $courses;
 			foreach ( $courses['results'] as $course_id ) {
 				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id_' . $course_id, $ets_lifterlms_discord_role_mapping ) ) {
 					
@@ -143,7 +139,6 @@ class Lifterlms_Discord_Addon_Public {
 		if ( 'none' !== $default_role && is_array( $all_roles ) && array_key_exists( $default_role, $all_roles ) ) {
 			$default_role_name = $all_roles[ $default_role ];
 		}
-
 
 		
 			if ( $access_token ) {
