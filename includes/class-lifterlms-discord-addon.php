@@ -154,7 +154,7 @@ class Lifterlms_Discord_Addon {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_admin_hooks() { 
 		
 		$plugin_admin = new Lifterlms_Discord_Addon_Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'wp_ajax_lifterlms_load_discord_roles', $plugin_admin, 'ets_lifterlms_load_discord_roles' );
