@@ -54,13 +54,222 @@ class Lifterlms_Discord_Addon_Admin {
 
 	}
 
+	/* 
+		Adding child menu under top level lifterlms menu
+	*/
+	public function add_admin_menu() {
+		add_submenu_page( 'lifterlms', __( 'Discord Settings', 'lifterlms-discord-addon' ), __( 'Discord Settings', 'lifterlms-discord-addon' ), 'manage_options', 'lifterlms-discord', array( $this, 'ets_lifterlms_discord_setting_page' ) );
+	}
+
+	/*
+	Display application details
+	*/
+	public function ets_lifterlms_discord_setting_page(){
+		wp_enqueue_script( 'jquery-ui-draggable' );
+		wp_enqueue_script( 'jquery-ui-droppable' );
+		require_once LIFTERLMS_PLUGIN_DIR.'admin/partials/lifterlms-discord-addon-admin-display.php';
+	}
+
+
+	public function ets_lifterlms_discord_save_application_details(){
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+		
+		$ets_lifterlms_discord_client_id = isset( $_POST['ets_lifterlms_discord_client_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_id'] ) ) : '';		
+		$ets_lifterlms_discord_client_secret = isset( $_POST['ets_lifterlms_discord_client_secret'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_client_secret'] ) ) : '';		
+		$ets_lifterlms_discord_redirect_page_id = isset( $_POST['ets_lifterlms_discord_redirect_page_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_redirect_page_id'] ) ) : '';	
+		$ets_lifterlms_discord_bot_token = isset( $_POST['ets_lifterlms_discord_bot_token'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_bot_token'] ) ) : '';		
+		$ets_lifterlms_discord_server_id = isset( $_POST['ets_lifterlms_discord_server_id'] ) ? sanitize_text_field( trim( $_POST['ets_lifterlms_discord_server_id'] ) ) : '';
+		
+
+			if ( wp_verify_nonce( $_POST['ets_lifterlms_discord_save_settings'], 'save_lifterlms_discord_settings' ) ) {
+				
+				if ( $ets_lifterlms_discord_client_id ) {
+					update_option( 'ets_lifterlms_discord_client_id', $ets_lifterlms_discord_client_id );
+				}
+
+				if ( $ets_lifterlms_discord_client_secret ) {
+					update_option( 'ets_lifterlms_discord_client_secret', $ets_lifterlms_discord_client_secret );
+				}
+
+				if ( $ets_lifterlms_discord_bot_token ) {
+					update_option( 'ets_lifterlms_discord_bot_token', $ets_lifterlms_discord_bot_token );
+				}
+
+				if ( $ets_lifterlms_discord_redirect_page_id ) {
+					
+					update_option( 'ets_lifterlms_discord_redirect_page_id', $ets_lifterlms_discord_redirect_page_id );
+				}
+
+				if ( $ets_lifterlms_discord_server_id ) {
+					update_option( 'ets_lifterlms_discord_server_id', $ets_lifterlms_discord_server_id );
+				}
+
+				$message = 'Your settings are saved successfully.';
+
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					// This will delete Stale DM channels.
+					delete_metadata( 'user', 0, '_ets_lifterlms_discord_dm_channel', '', true );
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_general_settings';
+					wp_safe_redirect( $pre_location );
+		 		}
+			}	
+		}
+		
+		/**
+	 * Save plugin general settings.
+	 *
+	 * @since    1.0.0
+	 */
+
+
+	public function ets_lifterlms_discord_role_mapping() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+
+		$ets_discord_roles = isset( $_POST['ets_lifterlms_discord_role_mapping'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_role_mapping'] ) ) : '';
+
+		$ets_lifterlms_discord_default_role_id = isset( $_POST['defaultRole'] ) ? sanitize_textarea_field( trim( $_POST['defaultRole'] ) ) : '';
+
+		$allow_none_member = isset( $_POST['allow_none_member'] ) ? sanitize_textarea_field( trim( $_POST['allow_none_member'] ) ) : '';
+
+		$ets_discord_roles   = stripslashes( $ets_discord_roles );
+		$save_mapping_status = update_option( 'ets_lifterlms_discord_role_mapping', $ets_discord_roles );
+		if ( isset( $_POST['ets_lifterlms_discord_role_mappings_nonce'] ) && wp_verify_nonce( $_POST['ets_lifterlms_discord_role_mappings_nonce'], 'discord_role_mappings_nonce' ) ) {
+			if ( ( $save_mapping_status || isset( $_POST['ets_lifterlms_discord_role_mapping'] ) ) && ! isset( $_POST['flush'] ) ) {
+				if ( $ets_lifterlms_discord_default_role_id ) {
+					update_option( 'ets_lifterlms_discord_default_role_id', $ets_lifterlms_discord_default_role_id );
+				}
+
+				if ( $allow_none_member ) {
+					update_option( 'ets_lifterlms_allow_none_member', $allow_none_member );
+				}
+
+				$message = 'Your mappings are saved successfully.';
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_role_mapping';
+					wp_safe_redirect( $pre_location );
+				}
+			}
+			if ( isset( $_POST['flush'] ) ) {
+				delete_option( 'ets_lifterlms_discord_role_mapping' );
+				delete_option( 'ets_lifterlms_discord_default_role_id' );
+				delete_option( 'ets_lifterlms_allow_none_member' );
+				$message = ' Your settings flushed successfully.';
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#mepr_role_mapping';
+					wp_safe_redirect( $pre_location );
+				}
+			}
+		}
+	  
+	}
+
+	/**
+	 * Save plugin Advance settings.
+	 *
+	 * 
+	 */
+
+	public function ets_lifterlms_discord_advance_settings() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+		if ( wp_verify_nonce( $_POST['ets_discord_save_adv_settings'], 'save_discord_adv_settings' ) ) {
+
+			$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) : '';
+			$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_welcome_message'] ) : '';
+			$ets_lifterlms_discord_kick_upon_disconnect = isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) : '';
+			$ets_lifterlms_discord_retry_failed_api = isset( $_POST['ets_lifterlms_discord_retry_failed_api'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_retry_failed_api'] ) : '';
+			$ets_lifterlms_discord_retry_api_count = isset( $_POST['ets_lifterlms_discord_retry_api_count'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_retry_api_count'] ) : '';
+			$ets_lifterlms_discord_job_queue_concurrency = isset( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) : '';
+			$ets_lifterlms_discord_job_queue_batch_size = isset( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) : '';
+			$ets_lifterlms_discord_log_api_response = isset( $_POST['ets_lifterlms_discord_log_api_response'] ) ? sanitize_textarea_field( $_POST['ets_lifterlms_discord_log_api_response'] ) : '';
+			
+
+		if ( isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', false );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_welcome_message'] ) && $_POST['ets_lifterlms_discord_welcome_message'] != '' ) {
+				update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_welcome_message', 'Your membership is expiring' );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', false );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_retry_failed_api'] ) ) {
+				update_option( 'ets_lifterlms_discord_retry_failed_api', true );
+			} 
+			else {
+				update_option( 'ets_lifterlms_discord_retry_failed_api', false );
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_retry_api_count'] ) ) {
+				if ( $ets_lifterlms_discord_retry_api_count < 1 ) {
+					update_option( 'ets_lifterlms_discord_retry_api_count', 1 );
+				} else {
+					update_option( 'ets_lifterlms_discord_retry_api_count', $ets_lifterlms_discord_retry_api_count );
+				}
+			}
+
+		if ( isset( $_POST['ets_lifterlms_discord_job_queue_concurrency'] ) ) {
+				if ( $ets_lifterlms_discord_job_queue_concurrency < 1 )
+				 {
+					update_option( 'ets_lifterlms_discord_job_queue_concurrency', 1 );
+				} 
+				else {
+					update_option( 'ets_lifterlms_discord_job_queue_concurrency', $ets_lifterlms_discord_job_queue_concurrency );
+				}
+			}
+		if ( isset( $_POST['ets_lifterlms_discord_job_queue_batch_size'] ) ) {
+					if ( $ets_lifterlms_discord_job_queue_batch_size < 1 ) {
+						update_option( 'ets_lifterlms_discord_job_queue_batch_size', 1 );
+					} 
+					else {
+						update_option( 'ets_lifterlms_discord_job_queue_batch_size', $ets_lifterlms_discord_job_queue_batch_size );
+					}
+				}
+
+		if ( isset( $_POST['ets_lifterlms_discord_log_api_response'] ) ) {
+					update_option( 'ets_lifterlms_discord_log_api_response', true );
+				}
+				 else {
+					update_option( 'ets_lifterlms_discord_log_api_response', false );
+				}
+				
+				
+				$message = 'Your settings are saved successfully.';
+
+			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#lifterlms_advance_settings';
+					wp_safe_redirect( $pre_location );
+				}
+			}		
+	}
+	
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
+	
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -73,8 +282,9 @@ class Lifterlms_Discord_Addon_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->plugin_name . 'tabs_css', plugin_dir_url( __FILE__ ) . 'css/skeletabs.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/lifterlms-discord-addon-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style( $this->plugin_name."select2.css", plugin_dir_url( __FILE__ ) . 'css/select2.min.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -83,7 +293,6 @@ class Lifterlms_Discord_Addon_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -95,9 +304,95 @@ class Lifterlms_Discord_Addon_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+		wp_enqueue_script( $this->plugin_name.'skeletabs.js', plugin_dir_url( __FILE__ ) . 'js/skeletabs.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name.'select2', plugin_dir_url( __FILE__ ) . 'js/select2.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, true );	
+		$script_params = array(
+			'admin_ajax'                    => admin_url( 'admin-ajax.php' ),
+			'permissions_const'             => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
+			'is_admin'                      => is_admin(),
+			'ets_lifterlms_discord_nonce'   => wp_create_nonce( 'ets-lifterlms-discord-ajax-nonce' ),
+		);
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, false );
-
+		wp_localize_script( $this->plugin_name, 'ets_lifterlms_param', $script_params );
 	}
 
-}
+		public function ets_lifterlms_discord_discord_api_callback() {
+
+			if ( is_user_logged_in() ) {
+			if ( isset( $_GET['action'] ) && 'mepr-discord-connectToBot' === $_GET['action'] ) {
+				$params                    = array(
+					'client_id'   => sanitize_text_field( get_option( 'ets_lifterlms_discord_client_id' )),
+					'permissions' => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
+					'scope'       => 'bot',
+					'guild_id'    => sanitize_text_field( get_option( 'ets_lifterlms_discord_server_id' )),
+				);
+
+				$discord_authorise_api_url = LIFTERLMS_DISCORD_API_URL . 'oauth2/authorize?' . http_build_query( $params );
+
+				wp_redirect( $discord_authorise_api_url, 302, get_site_url() );
+				exit();
+			}
+		}
+	}
+
+	   public function ets_lifterlms_load_discord_roles() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+		// Check for nonce security.
+		if ( ! wp_verify_nonce( $_POST['ets_lifterlms_discord_nonce'], 'ets-lifterlms-discord-ajax-nonce' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+
+		$server_id         = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
+		$discord_bot_token = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		if ( $server_id && $discord_bot_token ) {
+			$discod_server_roles_api = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $server_id . '/roles';
+			$guild_args              = array(
+				'method'  => 'GET',
+				'headers' => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Bot ' . $discord_bot_token,
+				),
+			);
+			
+			$guild_response          = wp_remote_get( $discod_server_roles_api, $guild_args );
+			$response_arr = json_decode( wp_remote_retrieve_body( $guild_response ), true );
+			if ( is_array( $response_arr ) && ! empty( $response_arr ) ) {
+				if ( array_key_exists( 'code', $response_arr ) || array_key_exists( 'error', $response_arr ) ) {
+					//write_api_response_logs( $response_arr, $user_id, debug_backtrace()[0] );
+				  } 
+				else 
+				{
+					$response_arr['previous_mapping'] = get_option( 'ets_lifterlms_discord_role_mapping' );
+
+
+					$discord_roles = array();
+
+					foreach ( $response_arr as $key => $value ) {
+						$isbot = false;
+						if ( is_array( $value ) ) {
+							if ( array_key_exists( 'tags', $value ) ) {
+								if ( array_key_exists( 'bot_id', $value['tags'] ) ) {
+									$isbot = true;
+								}
+							}
+						}
+						if ( 'previous_mapping' !== $key && false === $isbot && isset( $value['name'] ) && $value['name'] != '@everyone' ) {
+							$discord_roles[ $value['id'] ] = $value['name'];
+						}
+					}
+					update_option( 'ets_lifterlms_discord_all_roles', wp_json_encode( $discord_roles ) );
+				}
+				return wp_send_json( $response_arr );
+			}	
+
+     }
+	}
+	} // admin
+	?>
+
+
