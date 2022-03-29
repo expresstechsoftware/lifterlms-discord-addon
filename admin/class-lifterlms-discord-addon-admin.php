@@ -299,7 +299,7 @@ class Lifterlms_Discord_Addon_Admin {
 				}
 			}
 			if ( isset( $_POST['flush'] ) ) {
-				delete_option( 'ets_lifterlms_discord_role_mapping' );
+				//delete_option( 'ets_lifterlms_discord_role_mapping' );
 				$message = ' Your settings are flushed successfully.';
 				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
 					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#lifterlms_role_level';
@@ -368,8 +368,5 @@ class Lifterlms_Discord_Addon_Admin {
 			return wp_send_json( $response_arr );
 		}
 	}
-
-
-
 
 }

@@ -3,14 +3,14 @@ $user_id             = sanitize_text_field( trim( get_current_user_id() ) );
 /* 
 Get All Courses form database
 */
-$get_courses_lifterlms        =     get_posts( 
+$get_courses_lifterlms       =     get_posts( 
                                 array(
                                 'post_type' => 'course', 
                                 'post_status' => 'publish')
                                 );
 
 $default_role        = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_default_role_id' ) ) );
-$allow_none_member = sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
+$allow_none_member =   sanitize_text_field( trim( get_option( 'ets_lifterlms_allow_none_member' ) ) );
 
 ?>
  <!-- Drag and Drop the Discord Roles  -->

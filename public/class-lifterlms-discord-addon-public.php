@@ -107,31 +107,85 @@ class Lifterlms_Discord_Addon_Public {
 	 */
 	public function ets_lifterlms_discord_add_connect_button() {
 		
+		
 		$user_id                              = sanitize_text_field( get_current_user_id() );
-		$access_token                         = sanitize_text_field( get_user_meta( $user_id, 'ets_lifterlms_discord_access_token', true ) );
+		$access_token                         = sanitize_text_field( get_user_meta( $user_id, '_ets_lifterlms_discord_access_token', true ) );
 		$allow_none_member                    = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
 		$default_role                         = sanitize_text_field( get_option( 'ets_lifterlms_discord_default_role_id' ) );
 		$ets_lifterlms_discord_role_mapping   = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
 		$mapped_role_names                    = array();
-        
+        $student                              = llms_get_student();
+		$courses = $student->get_courses();
+
+		if ( $courses && is_array( $all_roles ) ) {
+			foreach ( $courses['results'] as $course_id ) {
+				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id_' . $course_id, $ets_lifterlms_discord_role_mapping ) ) {
+					$mapped_role_id = $ets_lifterlms_discord_role_mapping[ 'course_id_' . $course_id ];
+					if ( array_key_exists( $mapped_role_id, $all_roles ) ) {
+						array_push( $mapped_role_names, $all_roles[ $mapped_role_id ] );
+					}
+				}
+			}
+		}
+		$default_role_name = '';
+		if ( 'none' !== $default_role && is_array( $all_roles ) && array_key_exists( $default_role, $all_roles ) ) {
+			$default_role_name = $all_roles[ $default_role ];
+		}
+
 
 			if ( $access_token ) {
 				?>
 				<label class="ets-connection-lbl">
 					<?php echo __( 'Discord connection', 'lifterlms-discord-addon' ); ?>
-				</label>
+				</label><br>
+
 				<a href="#" class="ets-btn btn-disconnect" id="disconnect-discord" data-user-id="<?php echo esc_attr( $user_id ); ?>"><?php echo __( 'Disconnect From Discord ', 'lifterlms-discord-addon' ); ?><i class='fab fa-discord'></i></a>
-				<span class="ets-spinner"></span>
+				<section class="llms-sd-section llms-my-memberships">
+				
+				<?php if ( $mapped_role_names ) { ?>
+					<p class="ets_assigned_role">
+					<?php
+					echo __( 'Following Roles will be assigned to you in Discord: ', 'lifterlms-discord-addon' );
+					foreach ( $mapped_role_names as $mapped_role_name ) {
+						echo esc_html( $mapped_role_name ) . ', ';
+					}
+					if ( $default_role_name ) {
+						echo esc_html( $default_role_name );
+					}
+					
+					?>
+					</p>
+				<?php } ?>
+
+			</section>
 				<?php
-			} else {
+			} elseif ( $mapped_role_names || $allow_none_member == 'yes' ) {
 				?>
 				<label class="ets-connection-lbl"><br>
 					<?php echo __( 'Discord connection', 'lifterlms-discord-addon' ); ?>
 				</label><br>
-				
 				<a href="?action=lifterlms-discord-login" class="btn-connect ets-btn" ><?php echo __( 'Connect To Discord', 'lifterlms-discord-addon' ); ?> <i class='fab fa-discord'></i></a>
 				
+			<section class="llms-sd-section llms-my-memberships">
+				
+				<?php if ( $mapped_role_names ) { ?>
+					<p class="ets_assigned_role">
+					<?php
+					echo __( 'Following Roles will be assigned to you in Discord: ', 'lifterlms-discord-addon' );
+					foreach ( $mapped_role_names as $mapped_role_name ) {
+						echo esc_html( $mapped_role_name ) . ', ';
+					}
+					if ( $default_role_name ) {
+						echo esc_html( $default_role_name );
+						
+					}
+					
+					?>
+					</p>
+				<?php } ?>
+
+			</section>
 				<?php
 			}
 		
