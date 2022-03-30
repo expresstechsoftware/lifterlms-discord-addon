@@ -58,6 +58,11 @@ define( 'LIFTERLMS_DISCORD_BOT_PERMISSIONS', 8 );
  */
 define( 'LIFTERLMS_DISCORD_OAUTH_SCOPES', 'identify email guilds' );
 
+/**
+ * Define group name for action scheduler actions
+ */
+define( 'LIFTERLMS_DISCORD_AS_GROUP_NAME', 'ets-lifterlms-discord' );
+
 
 /**
  * LIFTERLMS_DISCORD_PLUGIN_DIR_PATH

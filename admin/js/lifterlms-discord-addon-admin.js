@@ -16,7 +16,7 @@
 			},
 
 			success: function (response) {
-				//console.log(response);
+				
 				if (response != null && response.hasOwnProperty('code') && response.code == 50001 && response.message == 'Missing Access')
 				{
 					$(".btn-connect-to-bot").show();

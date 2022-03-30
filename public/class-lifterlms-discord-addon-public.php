@@ -97,6 +97,13 @@ class Lifterlms_Discord_Addon_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . 'public_js', plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-public.min.js', array( 'jquery' ), $this->version, false );
+
+		$script_params = array(
+			'admin_ajax'                           => admin_url( 'admin-ajax.php' ),
+			'permissions_const'                    => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
+			'ets_lifterlms_discord_public_nonce' => wp_create_nonce( 'ets-lifterlms-discord-public-ajax-nonce' ),
+		);
 		wp_localize_script( $this->plugin_name . 'public_js', 'etsLifterlmspublicParams', $script_params );
 	}
 
@@ -128,11 +135,11 @@ class Lifterlms_Discord_Addon_Public {
 				}
 			}
 		}
+
 		$default_role_name = '';
 		if ( 'none' !== $default_role && is_array( $all_roles ) && array_key_exists( $default_role, $all_roles ) ) {
 			$default_role_name = $all_roles[ $default_role ];
 		}
-
 
 			if ( $access_token ) {
 				?>
@@ -180,7 +187,6 @@ class Lifterlms_Discord_Addon_Public {
 						echo esc_html( $default_role_name );
 						
 					}
-					
 					?>
 					</p>
 				<?php } ?>
@@ -188,7 +194,6 @@ class Lifterlms_Discord_Addon_Public {
 			</section>
 				<?php
 			}
-		
 	}
 
 	/**
@@ -254,7 +259,12 @@ class Lifterlms_Discord_Addon_Public {
 						if ( is_array( $user_body ) && array_key_exists( 'id', $user_body ) ) {
 							$_ets_lifterlms_discord_user_id = sanitize_text_field( trim( $user_body['id'] ) );
 							update_user_meta( $user_id, '_ets_lifterlms_discord_user_id', $_ets_lifterlms_discord_user_id );
-							
+						/*
+							call function ets_lifterlms_discord_add_member_in_guild()
+						 */	
+							//$this->ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+							$this->ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+
 						}
 					}
 				}
@@ -262,6 +272,56 @@ class Lifterlms_Discord_Addon_Public {
 	  }
 }
 
+	/**
+	 * Add new member into discord guild
+	 *   $_ets_memberpress_discord_user_id
+	 *   $user_id
+	 *   STRING $access_token
+	 */
+	// public function ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
+		
+	// 	//$allow_none_member   =  sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
+		
+	// 		as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_as_handle_add_member_to_guild', array( $_ets_lifterlms_discord_user_id, $user_id, $access_token ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
+		
+	// }
+
+	/**
+	 * Method to add new members to discord guild.
+	 *
+	 *  $_ets_lifterlms_discord_user_id
+	 *  $user_id
+	 *  $access_token
+	 */
+	public function ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
+		
+		if ( get_userdata( $user_id ) === false ) {
+			return;
+		}
+
+		$guild_id                                = sanitize_text_field( get_option( 'ets_lifterlms_discord_server_id' ) );
+		$discord_bot_token                       = sanitize_text_field( get_option( 'ets_lifterlms_discord_bot_token' ) );
+		$default_role                            = sanitize_text_field( get_option( 'ets_lifterlms_discord_default_role_id' ) );
+		$ets_lifterlms_discord_role_mapping    = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
+		$discord_role                            = '';
+		$discord_roles                           = array();
+		
+
+		$guilds_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $_ets_lifterlms_discord_user_id;
+		$guild_args             = array(
+			'method'  => 'PUT',
+			'headers' => array(
+				'Content-Type'  => 'application/json',
+				'Authorization' => 'Bot ' . $discord_bot_token,
+			),
+			'body'    => wp_json_encode(
+				array(
+					'access_token' => $access_token,
+				)
+			),
+		);
+		$guild_response         = wp_remote_post( $guilds_memeber_api_url, $guild_args );
+	}
      /**
 	 *  Responce/auth_token
 	 *
@@ -291,7 +351,6 @@ class Lifterlms_Discord_Addon_Public {
 		return $response;
 	}
 
-
 	/**
 	 * Get Discord user details from API
 	 *
@@ -312,8 +371,32 @@ class Lifterlms_Discord_Addon_Public {
 		$response_arr = json_decode( wp_remote_retrieve_body( $user_response ), true );
 		$user_body = json_decode( wp_remote_retrieve_body( $user_response ), true );
 		return $user_body;
+	}
 
+	/**
+	 * Disconnect user from discord
+	 *
+	 */
+	public function ets_lifterlms_disconnect_from_discord() {
+		
+	/*
+	 Check for nonce security here
+	*/
+		if ( isset( $_POST['ets_lifterlms_discord_public_nonce'] ) && ! wp_verify_nonce( $_POST['ets_lifterlms_discord_public_nonce'], 'ets-lifterlms-discord-public-ajax-nonce' ) ) {
+				wp_send_json_error( 'You do not have sufficient rights', 403 );
+				exit();
+		}
+		$user_id = sanitize_text_field( $_POST['user_id'] );
+		
+		if ( $user_id ) {
+			delete_user_meta( $user_id, '_ets_lifterlms_discord_access_token' );
+		}
+		$event_res = array(
+			'status'  => 1,
+			'message' => 'Successfully disconnected',
+		);
+		echo wp_json_encode( $event_res );
+		die();
 	}
 	
-
 }

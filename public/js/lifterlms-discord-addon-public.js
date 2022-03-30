@@ -5,6 +5,7 @@
 			$('#disconnect-discord').on('click', function (e) {
 				e.preventDefault();
 				var userId = $(this).data('user-id');
+				
 				$.ajax({
 					type: "POST",
 					dataType: "JSON",

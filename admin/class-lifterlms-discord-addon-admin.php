@@ -136,8 +136,6 @@ class Lifterlms_Discord_Addon_Admin {
 
 		wp_enqueue_script( $this->plugin_name . 'skeletabs.js', plugin_dir_url( __FILE__ ) . 'js/skeletabs.js', array( 'jquery' ), $this->version, false );
 
-		// /wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-admin.min.js', array( 'jquery' ), $this->version, false );
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-admin.js', array( 'jquery' ), $this->version, false );
 		$script_params = array(
 			'admin_ajax'                  => admin_url( 'admin-ajax.php' ),
