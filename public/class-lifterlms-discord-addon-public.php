@@ -107,14 +107,13 @@ class Lifterlms_Discord_Addon_Public {
 		wp_localize_script( $this->plugin_name . 'public_js', 'etsLifterlmspublicParams', $script_params );
 	}
 
-		/**
+	/**
 	 * Add discord connection buttons.
 	 *
 	 * @since    1.0.0
 	 */
 	public function ets_lifterlms_discord_add_connect_button() {
-		
-		
+
 		$user_id                              = sanitize_text_field( get_current_user_id() );
 		$access_token                         = sanitize_text_field( get_user_meta( $user_id, '_ets_lifterlms_discord_access_token', true ) );
 		$allow_none_member                    = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
@@ -124,7 +123,6 @@ class Lifterlms_Discord_Addon_Public {
 		$mapped_role_names                    = array();
         $student                              = llms_get_student();
 		$courses = $student->get_courses();
-
 
 		if ( $courses && is_array( $all_roles ) ) {
 			foreach ( $courses['results'] as $course_id ) {
@@ -196,7 +194,6 @@ class Lifterlms_Discord_Addon_Public {
 				<?php
 			}
 	}
-
 	/**
 	 *  initialize discord authentication.
 	 *
@@ -263,8 +260,6 @@ class Lifterlms_Discord_Addon_Public {
 						/*
 							call function ets_lifterlms_discord_add_member_in_guild()
 						 */	
-							//$this->ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
-							
 							$this->ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
 							
 						}
@@ -273,8 +268,6 @@ class Lifterlms_Discord_Addon_Public {
 			}
 	  }
 }
-
-
 	/**
 	 * Method to add new members to discord guild.
 	 *
@@ -300,16 +293,6 @@ class Lifterlms_Discord_Addon_Public {
         //$mapped_role_names                    = array();
 
 		
-		if ( $courses && is_array( $all_roles ) ) {
-			foreach ( $courses['results'] as $course_id ) {
-				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id_' . $course_id, $ets_lifterlms_discord_role_mapping ) ) {
-					$mapped_role_id = $ets_lifterlms_discord_role_mapping[ 'course_id_' . $course_id ];
-						array_push( $discord_roles,  $mapped_role_id );
-						//$this->ets_lifterlms_discord_as_handler_put_memberrole( $user_id, $discord_roles );
-				}
-			}
-		}
-		
 		$guilds_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $_ets_lifterlms_discord_user_id;
 		$guild_args             = array(
 			'method'  => 'PUT',
@@ -325,24 +308,20 @@ class Lifterlms_Discord_Addon_Public {
 		);
 		$guild_response         = wp_remote_post( $guilds_memeber_api_url, $guild_args );
 		
-
-		if ( $mapped_role_id && $mapped_role_id != 'none' && isset( $user_id ) ) {
-			$this->put_discord_role_api( $user_id, $mapped_role_id );
+		if ( $courses && is_array( $all_roles ) ) {
+			foreach ( $courses['results'] as $course_id ) {
+				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id_' . $course_id, $ets_lifterlms_discord_role_mapping ) ) {
+					$mapped_role_id = $ets_lifterlms_discord_role_mapping[ 'course_id_' . $course_id ];
+						$this->ets_lifterlms_discord_as_handler_put_memberrole( $user_id, $mapped_role_id );
+					}
+			}
 		}
-
 		if ( $default_role && 'none' !== $default_role && isset( $user_id ) ) {
-			$this->put_discord_role_api( $user_id, $default_role );
+			$this->ets_lifterlms_discord_as_handler_put_memberrole( $user_id, $default_role );
 			update_user_meta( $user_id, '_ets_lifterlms_discord_default_role_id', $default_role );
 		}
 		
-	}
-
-
-	public function put_discord_role_api( $user_id, $role_id ) {
-
-			$this->ets_lifterlms_discord_as_handler_put_memberrole( $user_id, $role_id );
-	}
-     
+	} 
 	/**
 	 * Action Schedule handler for mmeber change role discord.
 	 * $user_id
@@ -366,21 +345,15 @@ class Lifterlms_Discord_Addon_Public {
 					'Content-Length' => 0,
 				),
 			);
-
-			$response = wp_remote_get( $discord_change_role_api_url, $param );
-			$response_arr = json_decode( wp_remote_retrieve_body( $response ), true );
-
-			//print_r($response_arr);
 			
+			$response = wp_remote_get( $discord_change_role_api_url, $param );
+			$response_arr = json_decode( wp_remote_retrieve_body( $response ), true );	
 		}
 	}
-
      /**
 	 *  Responce/auth_token
 	 *
 	 */
-
-
 	public function ets_lifterlms_discord_auth_token( $code, $user_id ) {
 	
 		$response              = '';
@@ -452,6 +425,5 @@ class Lifterlms_Discord_Addon_Public {
 		);
 		echo wp_json_encode( $event_res );
 		die();
-	}
-	
+	}	
 }
