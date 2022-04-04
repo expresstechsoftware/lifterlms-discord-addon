@@ -369,4 +369,38 @@ class Lifterlms_Discord_Addon_Admin {
 		}
 	}
 
+
+	public function ets_lifterlms_discord_advance_settings() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			wp_send_json_error( 'You do not have sufficient rights', 403 );
+			exit();
+		}
+
+		$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) : false;
+		$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_welcome_message'] ) ) : '';
+
+		if ( isset( $_POST['adv_submit'] ) ) {
+				
+			if ( isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
+			} else {
+				update_option( 'ets_lifterlms_discord_send_welcome_dm', false );
+			}
+
+			if ( isset( $_POST['ets_lifterlms_discord_welcome_message'] ) && $_POST['ets_lifterlms_discord_welcome_message'] != '' ) {
+				update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
+			} else {
+				
+				update_option( 'ets_lifterlms_discord_welcome_message', false );
+			}
+				
+				$message = 'Your settings are saved successfully.';
+				if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#lifterlms_advanced_tab';
+					wp_safe_redirect( $pre_location );
+				}
+
+		}
+	}
+
 }

@@ -37,6 +37,9 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<li class="skltbs-tab-item">
 				   <button class="skltbs-tab" data-identity="level-mapping" ><?php echo __( 'Role Mapping', 'lifterlms-discord-addon' ); ?></button>
 				</li>
+				<li class="skltbs-tab-item">
+					<button class="skltbs-tab" data-identity="advanced-tab" data-toggle="tab" data-event="ets_advanced"><?php echo __( 'Advanced', 'lifterlms-discord-addon' ); ?>	</button>
+				</li>
 		</ul>
 <!--Creating Tabs-->
             <div class="skltbs-panel-group">
@@ -47,5 +50,10 @@ if ( isset( $_GET['save_settings_msg'] ) ) {
 				<div id='lifterlms_role_level' class="skltbs-panel">
 				   <?php require_once LIFTERLMS_DISCORD_PLUGIN_DIR_PATH . 'admin/partials/pages/lifterlms-discord-role-level-map.php'; ?>
 				</div>
+
+				<div id='lifterlms_advanced_tab' class="skltbs-panel">
+				   <?php require_once LIFTERLMS_DISCORD_PLUGIN_DIR_PATH . 'admin/partials/pages/lifterlms-discord-advance.php'; ?>
+				</div>
+
 			</div>
     </div>
