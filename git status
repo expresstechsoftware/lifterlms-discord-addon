@@ -1,0 +1,138 @@
+[33mcommit 15b434ebc40b8389f01760556d68d4c71c314893[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/24-disconnect-button[m[33m, [m[1;31morigin/feature/24-disconnect-button[m[33m)[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Fri Apr 1 19:50:50 2022 +0530
+
+    #26 assigned courses mapped roles
+
+[33mcommit 6eb8b2f27294bb2a68f22b1d1dc665c9c3b6d18d[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Thu Mar 31 20:00:10 2022 +0530
+
+    #26
+
+[33mcommit 171474ebb4322c5b4ab2f83c8bff983aad0aa656[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 30 18:41:05 2022 +0530
+
+    tiket=>#18 Added Member to guild
+
+[33mcommit b8667ba4bbc40e415058151d57b1dac669c7d806[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Tue Mar 29 18:50:35 2022 +0530
+
+    Added disconnect button#15 UPDATE 29/03/2022
+
+[33mcommit 52398c82b978eac65b8d812d1c43a1cf234fbc87[m[33m ([m[1;31mupstream/development[m[33m, [m[1;31morigin/development[m[33m, [m[1;32mdevelopment[m[33m)[m
+Merge: d543163 6a1ca60
+Author: Ravi Soni <ravisoni6262@gmail.com>
+Date:   Tue Mar 29 11:36:24 2022 +0530
+
+    Merge pr-23
+
+[33mcommit d543163b006d378ad16069e2700527630e384c6d[m
+Author: Ravi Soni <ravisoni6262@gmail.com>
+Date:   Fri Mar 25 19:35:35 2022 +0530
+
+    update in pr-23
+
+[33mcommit 6a1ca609e4541e026809c28a3d9bddf6fa295c3d[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Fri Mar 25 18:16:07 2022 +0530
+
+    fixed-issues#15
+
+[33mcommit 0947aa8e75b2cd4baf0fe83e2b1d7b030af765f0[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Thu Mar 24 16:49:30 2022 +0530
+
+    #23
+
+[33mcommit f9ee501681e8ecf7b96704dd1b416baa0b1cf40d[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 23 19:53:44 2022 +0530
+
+    fixed-isseue #23
+
+[33mcommit 90cf3dd7ead06129969f6c4ec01e076579c1aa41[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 23 11:46:23 2022 +0530
+
+    Role-listing #14
+
+[33mcommit 9273f8114c0383efcbfed238fa9770ce93d04fd3[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Thu Mar 17 19:58:52 2022 +0530
+
+    #14
+
+[33mcommit 672ba966fb4332a721f2935a43566778c30bd4c1[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Thu Mar 17 17:02:20 2022 +0530
+
+    Display active courses of LifterLMS on the right side#14
+
+[33mcommit 2daed673910e9f9384eac5ae9e21490e1b2f8bfc[m
+Author: Ravi Soni <ravisoni6262@gmail.com>
+Date:   Thu Mar 17 11:23:17 2022 +0530
+
+    Removed commented code
+
+[33mcommit d6ed1837ece020edc842984cde33e1d3d3f638fd[m[33m ([m[1;31morigin/feature/2-add-sub-menu[m[33m)[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 16 20:03:07 2022 +0530
+
+    #13
+
+[33mcommit 323b2767973359e48f12e422ba63ac4fe161eb79[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 16 17:21:49 2022 +0530
+
+    for demo pur
+
+[33mcommit 15b86269d99616e7dd1126317be1c2fce50a9ad1[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 16 00:13:44 2022 +0530
+
+    token : #13
+
+[33mcommit 3984c0bd7ccee02f0d0dae90426f35676b299245[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Tue Mar 15 17:17:56 2022 +0530
+
+    tiket : Save bot name inside option table #22
+
+[33mcommit 4b937c6afb7552723fd1726f307701d16143aba1[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Mon Mar 14 20:25:16 2022 +0530
+
+    #21
+
+[33mcommit de8464f5b999ad23e98221b3bc3d476319c5a057[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Mon Mar 14 16:49:42 2022 +0530
+
+    fixed isseus of application-tab #21
+
+[33mcommit 86b0751ea36dbcce47b62a37f0491aefcb459a38[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Thu Mar 10 19:10:39 2022 +0530
+
+    fixed-issues of Application-tab#4
+
+[33mcommit b2924e15fe4e5e3f1e1597eeb933a28d50617d25[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 9 19:30:39 2022 +0530
+
+    #4 Application tabs
+
+[33mcommit 47a94f68e064a290751904eeb219d2aef5116864[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Wed Mar 9 11:53:00 2022 +0530
+
+    #4
+
+[33mcommit 4000ab5676c9c4e2d660a4796a46ca05078e3645[m
+Author: shubhamprajapat2000 <shubhamprajapat2000>
+Date:   Tue Mar 8 20:14:47 2022 +0530
+
+    #4
