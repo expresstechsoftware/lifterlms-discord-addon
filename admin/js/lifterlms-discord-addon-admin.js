@@ -94,6 +94,13 @@
 			}	
 		});
 
+
+		/*Flush settings from local storage*/
+		$("#lifterlmsRevertMapping").click(function () {
+			localStorage.removeItem('LifterlmsMapArray');
+			localStorage.removeItem('LifterlmsMappingjson');
+		});
+
 /*Create droppable element*/
 		
 		function init() {

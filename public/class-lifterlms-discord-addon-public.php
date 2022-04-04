@@ -95,7 +95,6 @@ class Lifterlms_Discord_Addon_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-public.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . 'public_js', plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-public.min.js', array( 'jquery' ), $this->version, false );
 
@@ -114,6 +113,7 @@ class Lifterlms_Discord_Addon_Public {
 	 */
 	public function ets_lifterlms_discord_add_connect_button() {
 
+	if(is_user_logged_in()){
 		$user_id                              = sanitize_text_field( get_current_user_id() );
 		$access_token                         = sanitize_text_field( get_user_meta( $user_id, '_ets_lifterlms_discord_access_token', true ) );
 		$allow_none_member                    = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
@@ -124,8 +124,6 @@ class Lifterlms_Discord_Addon_Public {
         $student                              = llms_get_student();
 		$courses = $student->get_courses();
 		
-		
-
 		if ( $courses && is_array( $all_roles ) ) {
 			foreach ( $courses['results'] as $course_id ) {
 				if ( is_array( $ets_lifterlms_discord_role_mapping ) && array_key_exists( 'course_id_' . $course_id, $ets_lifterlms_discord_role_mapping ) ) {
@@ -197,6 +195,7 @@ class Lifterlms_Discord_Addon_Public {
 				<?php
 			}
 	}
+}
 	/**
 	 *  initialize discord authentication.
 	 *
