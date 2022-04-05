@@ -1,5 +1,5 @@
 <?php
-$set_job_cnrc                                 = sanitize_text_field( trim( get_option( 'set_job_cnrc' ) ) );
+$set_job_cnrc                                = sanitize_text_field( trim( get_option( 'set_job_cnrc' ) ) );
 $set_job_q_batch_size                         = sanitize_text_field( trim( get_option( 'set_job_q_batch_size' ) ) );
 $retry_failed_api                             = sanitize_text_field( trim( get_option( 'retry_failed_api' ) ) );
 $log_api_res                                  = sanitize_text_field( trim( get_option( 'log_api_res' ) ) );

@@ -369,18 +369,42 @@ class Lifterlms_Discord_Addon_Admin {
 		}
 	}
 
+	/**
+	 * Save plugin Advance settings.
+	 *
+	 */
+
 
 	public function ets_lifterlms_discord_advance_settings() {
 		if ( ! current_user_can( 'administrator' ) ) {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
 		}
-
-		$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) : false;
-		$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_welcome_message'] ) ) : '';
-
 		if ( isset( $_POST['adv_submit'] ) ) {
-				
+
+			$ets_lifterlms_set_job_cnrc = isset( $_POST['set_job_cnrc'] ) ? sanitize_textarea_field( trim( $_POST['set_job_cnrc'] ) ) : '';
+			$ets_lifterlms_set_job_q_batch_size = isset( $_POST['set_job_q_batch_size'] ) ? sanitize_textarea_field( trim( $_POST['set_job_q_batch_size'] ) ) : '';
+			$ets_lifterlms_retry_api_count = isset( $_POST['ets_lifterlms_retry_api_count'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_retry_api_count'] ) ) : '';
+
+			$ets_lifterlms_retry_failed_api = isset( $_POST['retry_failed_api'] ) ? sanitize_textarea_field( trim( $_POST['retry_failed_api'] ) ) : '';
+			$ets_lifterlms_log_api_res = isset( $_POST['log_api_res'] ) ? sanitize_textarea_field( trim( $_POST['log_api_res'] ) ) : '';
+			$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) : false;
+			$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_welcome_message'] ) ) : '';
+			$ets_lifterlms_discord_kick_upon_disconnect = isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) : '';
+			
+					
+			if ( isset( $_POST['retry_failed_api'] ) ) {
+				update_option( 'ets_lifterlms_retry_failed_api', true );
+			} else {
+				update_option( 'ets_lifterlms_retry_failed_api', false );
+			}
+
+			if ( isset( $_POST['log_api_res'] ) ) {
+				update_option( 'ets_lifterlms_log_api_res', true );
+			} else {
+				update_option( 'ets_lifterlms_log_api_res', false );
+			}
+
 			if ( isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) {
 				update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
 			} else {
@@ -390,8 +414,38 @@ class Lifterlms_Discord_Addon_Admin {
 			if ( isset( $_POST['ets_lifterlms_discord_welcome_message'] ) && $_POST['ets_lifterlms_discord_welcome_message'] != '' ) {
 				update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
 			} else {
-				
 				update_option( 'ets_lifterlms_discord_welcome_message', false );
+			}
+
+			if ( isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', true );
+			} else {
+				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', false );
+			}
+
+
+			if ( isset( $_POST['set_job_cnrc'] ) ) {
+				if ( $set_job_cnrc < 1 ) {
+					update_option( 'ets_lifterlms_set_job_cnrc', 1 );
+				} else {
+					update_option( 'ets_lifterlms_set_job_cnrc', $set_job_cnrc );
+				}
+			}
+
+			if ( isset( $_POST['set_job_q_batch_size'] ) ) {
+				if ( $set_job_q_batch_size < 1 ) {
+					update_option( 'ets_lifterlms_set_job_q_batch_size', 1 );
+				} else {
+					update_option( 'ets_lifterlms_set_job_q_batch_size', $set_job_q_batch_size );
+				}
+			}
+
+			if ( isset( $_POST['ets_lifterlms_retry_api_count'] ) ) {
+				if ( $ets_lifterlms_retry_api_count < 1 ) {
+					update_option( 'ets_lifterlms_retry_api_count', 1 );
+				} else {
+					update_option( 'ets_lifterlms_retry_api_count', $ets_lifterlms_retry_api_count );
+				}
 			}
 				
 				$message = 'Your settings are saved successfully.';
@@ -399,7 +453,6 @@ class Lifterlms_Discord_Addon_Admin {
 					$pre_location = $_SERVER['HTTP_REFERER'] . '&save_settings_msg=' . $message . '#lifterlms_advanced_tab';
 					wp_safe_redirect( $pre_location );
 				}
-
 		}
 	}
 
