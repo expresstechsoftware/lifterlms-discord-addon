@@ -247,7 +247,7 @@
 
 		/*Tab options*/
 		$.skeletabs.setDefaults({
-			keyboard: false,
+			//keyboard: false,
 		});
 		$(document.body).on('change', '.ets_wp_pages_list', function (e) {
 			var page_url = $(this).find(':selected').data('page-url');

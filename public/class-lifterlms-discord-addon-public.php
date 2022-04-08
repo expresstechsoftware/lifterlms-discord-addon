@@ -401,6 +401,7 @@ class Lifterlms_Discord_Addon_Public {
 		$response_arr = json_decode( wp_remote_retrieve_body( $user_response ), true );
 		$user_body = json_decode( wp_remote_retrieve_body( $user_response ), true );
 		return $user_body;
+		
 	}
 
 	/**
@@ -408,24 +409,70 @@ class Lifterlms_Discord_Addon_Public {
 	 *
 	 */
 	public function ets_lifterlms_disconnect_from_discord() {
-		
-	/*
-	 Check for nonce security here
-	*/
-		if ( isset( $_POST['ets_lifterlms_discord_public_nonce'] ) && ! wp_verify_nonce( $_POST['ets_lifterlms_discord_public_nonce'], 'ets-lifterlms-discord-public-ajax-nonce' ) ) {
-				wp_send_json_error( 'You do not have sufficient rights', 403 );
-				exit();
+		if ( is_user_logged_in() ) {
+				/*
+				Check for nonce security here
+				*/
+					if ( isset( $_POST['ets_lifterlms_discord_public_nonce'] ) && ! wp_verify_nonce( $_POST['ets_lifterlms_discord_public_nonce'], 'ets-lifterlms-discord-public-ajax-nonce' ) ) {
+							wp_send_json_error( 'You do not have sufficient rights', 403 );
+							exit();
+					}
+					$ets_lifterlms_discord_kick_upon_disconnect  = sanitize_text_field( get_option( 'ets_lifterlms_discord_kick_upon_disconnect' ) );
+					$user_id = sanitize_text_field( $_POST['user_id'] );
+
+					if ( $user_id ) {
+
+						 if(!$ets_lifterlms_discord_kick_upon_disconnect == true) {
+							$this->ets_lifterlms_discord_as_handler_delete_member_from_guild( $user_id );
+						} 
+
+						
+						/*Delete all usermeta related to discord connection*/
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_user_id' );
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_access_token' );
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_refresh_token' );
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_default_role_id' );
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_username' );
+						delete_user_meta( $user_id, '_ets_lifterlms_discord_expires_in' );
+					}
+					
+					$event_res = array(
+						'status'  => 1,
+						'message' => 'Successfully disconnected',
+					);
+					echo wp_json_encode( $event_res );
+					die();
 		}
-		$user_id = sanitize_text_field( $_POST['user_id'] );
-		
-		if ( $user_id ) {
-			delete_user_meta( $user_id, '_ets_lifterlms_discord_access_token' );
+		else{
+			wp_send_json_error( 'Unauthorized user', 401 );
+			exit();
 		}
-		$event_res = array(
-			'status'  => 1,
-			'message' => 'Successfully disconnected',
-		);
-		echo wp_json_encode( $event_res );
-		die();
 	}	
+
+
+		/**
+	 * AS Handling member delete from huild
+	 *
+	 * @param INT  $user_id
+	 * @param BOOL $is_schedule
+	 * @return OBJECT API response
+	 */
+	public function ets_lifterlms_discord_as_handler_delete_member_from_guild( $user_id ) {
+		//die('ok');
+		$guild_id                         = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
+		$discord_bot_token                = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		$_ets_lifterlms_discord_user_id = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
+		$guilds_delete_memeber_api_url    = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $_ets_lifterlms_discord_user_id;
+		$guild_args                       = array(
+			'method'  => 'DELETE',
+			'headers' => array(
+				'Content-Type'  => 'application/json',
+				'Authorization' => 'Bot ' . $discord_bot_token,
+			),
+		);
+		$guild_response   = wp_remote_post( $guilds_delete_memeber_api_url, $guild_args );
+		$response_arr = json_decode( wp_remote_retrieve_body( $guild_response ), true );
+
+		
+	}
 }
