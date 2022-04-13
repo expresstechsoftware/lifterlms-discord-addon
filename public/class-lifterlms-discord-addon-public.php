@@ -282,11 +282,13 @@ class Lifterlms_Discord_Addon_Public {
 		if ( get_userdata( $user_id ) === false ) {
 			return;
 		}
-		$user_id                              = sanitize_text_field( get_current_user_id() );
+		$user_id                                 = sanitize_text_field( get_current_user_id() );
 		$guild_id                                = sanitize_text_field( get_option( 'ets_lifterlms_discord_server_id' ) );
 		$discord_bot_token                       = sanitize_text_field( get_option( 'ets_lifterlms_discord_bot_token' ) );
 		$default_role                            = sanitize_text_field( get_option( 'ets_lifterlms_discord_default_role_id' ) );
 		$ets_lifterlms_discord_role_mapping    = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
+		$ets_lifterlms_discord_send_welcome_dm = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
+		
 		$mapped_role_id                            = '';
 		$discord_roles                           = array();
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
@@ -321,6 +323,12 @@ class Lifterlms_Discord_Addon_Public {
 		if ( $default_role && 'none' !== $default_role && isset( $user_id ) ) {
 			$this->ets_lifterlms_discord_as_handler_put_memberrole( $user_id, $default_role );
 			update_user_meta( $user_id, '_ets_lifterlms_discord_default_role_id', $default_role );
+		}
+
+		// Send welcome message.
+		if ( true == $ets_lifterlms_discord_send_welcome_dm ) {
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'welcome' );
+			//as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_send_welcome_dm', array( $user_id, 'welcome' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
 		}
 		
 	} 
@@ -425,8 +433,6 @@ class Lifterlms_Discord_Addon_Public {
 						 if(!$ets_lifterlms_discord_kick_upon_disconnect == true) {
 							$this->ets_lifterlms_discord_as_handler_delete_member_from_guild( $user_id );
 						} 
-
-						
 						/*Delete all usermeta related to discord connection*/
 						delete_user_meta( $user_id, '_ets_lifterlms_discord_user_id' );
 						delete_user_meta( $user_id, '_ets_lifterlms_discord_access_token' );
@@ -458,7 +464,6 @@ class Lifterlms_Discord_Addon_Public {
 	 * @return OBJECT API response
 	 */
 	public function ets_lifterlms_discord_as_handler_delete_member_from_guild( $user_id ) {
-		//die('ok');
 		$guild_id                         = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
 		$discord_bot_token                = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
 		$_ets_lifterlms_discord_user_id = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
@@ -472,7 +477,111 @@ class Lifterlms_Discord_Addon_Public {
 		);
 		$guild_response   = wp_remote_post( $guilds_delete_memeber_api_url, $guild_args );
 		$response_arr = json_decode( wp_remote_retrieve_body( $guild_response ), true );
-
 		
 	}
+
+
+
+
+	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning' ) {
+		
+		$discord_user_id                                   = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
+		$discord_bot_token                                 = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		$ets_lifterlms_discord_welcome_message            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_welcome_message' ) ) );
+		$ets_lifterlms_discord_cancel_message             = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_cancel_message' ) ) );
+		
+		// Check if DM channel is already created for the user.
+		$user_dm = get_user_meta( $user_id, '_ets_lifterlms_discord_dm_channel', true );
+
+		if ( ! isset( $user_dm['id'] ) || false === $user_dm || empty( $user_dm ) ) {
+			$this->ets_lifterlms_discord_create_member_dm_channel( $user_id );
+			$user_dm       = get_user_meta( $user_id, '_ets_lifterlms_discord_dm_channel', true );
+			$dm_channel_id = $user_dm['id'];
+		} else {
+			$dm_channel_id = $user_dm['id'];
+		}
+
+		
+		if ( 'welcome' === $type ) {
+			update_user_meta( $user_id, '_ets_lifterlms_discord_welcome_dm_for_', true);
+			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_welcome_message);
+		}
+		
+		$creat_dm_url = LIFTERLMS_DISCORD_API_URL . '/channels/' . $dm_channel_id . '/messages';
+		$dm_args      = array(
+			'method'  => 'POST',
+			'headers' => array(
+				'Content-Type'  => 'application/json',
+				'Authorization' => 'Bot ' . $discord_bot_token,
+			),
+			'body'    => wp_json_encode(
+				array(
+					'content' => sanitize_text_field( trim( wp_unslash( $message ) ) ),
+				)
+			),
+		);
+		$dm_response  = wp_remote_post( $creat_dm_url, $dm_args );
+		$dm_response_body = json_decode( wp_remote_retrieve_body( $dm_response ), true );
+	}
+
+	public function ets_lifterlms_discord_create_member_dm_channel( $user_id ) {
+
+		$discord_user_id       = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
+		$discord_bot_token     = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		$create_channel_dm_url = LIFTERLMS_DISCORD_API_URL . '/users/@me/channels';
+		$dm_channel_args       = array(
+			'method'  => 'POST',
+			'headers' => array(
+				'Content-Type'  => 'application/json',
+				'Authorization' => 'Bot ' . $discord_bot_token,
+			),
+			'body'    => wp_json_encode(
+				array(
+					'recipient_id' => $discord_user_id,
+				)
+			),
+		);
+
+		$created_dm_response = wp_remote_post( $create_channel_dm_url, $dm_channel_args );
+	
+		$response_arr = json_decode( wp_remote_retrieve_body( $created_dm_response ), true );
+		if ( is_array( $response_arr ) && ! empty( $response_arr ) ) {
+
+			update_user_meta( $user_id, '_ets_lifterlms_discord_dm_channel', $response_arr );
+		}
+		return $response_arr;
+	}
+
+
+
+	function ets_lifterlms_discord_get_formatted_dm( $user_id, $message ) {
+		global $wpdb;
+		$user_obj                             = get_user_by( 'id', $user_id );
+		$ets_lifterlms_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
+		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
+		//$mapped_role_id                     = $ets_lifterlms_discord_role_mapping[ 'level_id_' . $membership['product_id'] ];
+		$MEMBER_USERNAME                      = $user_obj->user_login;
+		$MEMBER_EMAIL                         = $user_obj->user_email;
+		$SITE_URL  = get_bloginfo( 'url' );
+		$BLOG_NAME = get_bloginfo( 'name' );
+	
+		$find    = array(
+			'[MEMBER_USERNAME]',
+			'[MEMBER_EMAIL]',
+			'[SITE_URL]',
+			'[BLOG_NAME]',
+			
+		);
+		$replace = array(
+			$MEMBER_USERNAME,
+			$MEMBER_EMAIL,
+			$SITE_URL,
+			$BLOG_NAME,
+			
+		);
+	
+		return str_replace( $find, $replace, $message );
+	}
+
+
 }

@@ -31,6 +31,8 @@ class Lifterlms_Discord_Addon_Activator {
 	 */
 	public static function activate() {
     update_option( 'ets_lifterlms_discord_uuid_file_name', wp_generate_uuid4() );
+	update_option( 'ets_lifterlms_discord_send_welcome_dm', true );
+	update_option( 'ets_lifterlms_discord_welcome_message', 'Hi [STUDENT_USERNAME] ([STUDENT_EMAIL]), Welcome, your course started Thanks, Kind Regards, [BLOG_NAME]' );
 	}
 
 }
