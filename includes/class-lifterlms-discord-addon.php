@@ -189,7 +189,11 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action( 'wp_ajax_ets_lifterlms_disconnect_from_discord', $plugin_public, 'ets_lifterlms_disconnect_from_discord' );
 		$this->loader->add_action( 'ets_lifterlms_discord_as_handler_delete_member_from_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_delete_member_from_guild', 10, 3 );
 		$this->loader->add_action( 'ets_lifterlms_discord_send_welcome_dm', $this, 'ets_lifterlms_discord_handler_send_dm', 10, 3 );
-
+		$this->loader->add_action('lifterlms_quiz_completed', $plugin_public,'ets_lifterlms_complete_quiz', 10, 2);
+		$this->loader->add_action('lifterlms_quiz_failed', $plugin_public,'ets_lifterlms_quiz_failed', 10, 3);
+		
+		$this->loader->add_action('lifterlms_quiz_passed', $plugin_public,'ets_lifterlms_quiz_passed', 10, 3);
+	
 	}
 
 	/**
@@ -245,32 +249,7 @@ class Lifterlms_Discord_Addon {
 	 * @param ARRAY  $active_membership
 	 * @param STRING $type (warning|expired)
 	 */
-	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning' ) {
-		$discord_user_id                                    = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
-		$discord_bot_token                                  = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
-		$ets_memberpress_discord_welcome_message            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_welcome_message' ) ) );
-		
-		if ( 'welcome' === $type ) {
-			update_user_meta( $user_id, '_ets_lifterlms_discord_welcome_dm_for_', true);
-			$message = ets_lifterlms_discord_get_formatted_dm( $user_id, $ets_lifterlms_discord_welcome_message );
-		}
-		
-		$creat_dm_url = LIFTERLMS_DISCORD_API_URL . '/channels/' . $dm_channel_id . '/messages';
-		$dm_args      = array(
-			'method'  => 'POST',
-			'headers' => array(
-				'Content-Type'  => 'application/json',
-				'Authorization' => 'Bot ' . $discord_bot_token,
-			),
-			'body'    => wp_json_encode(
-				array(
-					'content' => sanitize_text_field( trim( wp_unslash( $message ) ) ),
-				)
-			),
-		);
-		$dm_response  = wp_remote_post( $creat_dm_url, $dm_args );
-		$dm_response_body = json_decode( wp_remote_retrieve_body( $dm_response ), true );
-	}
+
 
 
 }

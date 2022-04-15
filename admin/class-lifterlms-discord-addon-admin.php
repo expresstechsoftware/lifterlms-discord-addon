@@ -383,7 +383,6 @@ class Lifterlms_Discord_Addon_Admin {
 			wp_send_json_error( 'You do not have sufficient rights', 403 );
 			exit();
 		}
-
 		
 		if ( isset( $_POST['adv_submit'] ) ) {
 
@@ -397,7 +396,12 @@ class Lifterlms_Discord_Addon_Admin {
 			$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_welcome_message'] ) ) : '';
 			$ets_lifterlms_discord_kick_upon_disconnect = isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) : '';
 			
-					
+			$ets_lifterlms_discord_quiz_complete = isset( $_POST['ets_lifterlms_discord_quiz_complete'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_quiz_complete'] ) ) : '';
+			$ets_lifterlms_discord_failed_Quiz = isset( $_POST['ets_lifterlms_discord_failed_Quiz'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_failed_Quiz'] ) ) : '';
+			$ets_lifterlms_discord_paas_quiz = isset( $_POST['ets_lifterlms_discord_paas_quiz'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_paas_quiz'] ) ) : '';
+			
+			
+
 			if ( isset( $_POST['retry_failed_api'] ) ) {
 				update_option( 'ets_lifterlms_retry_failed_api', true );
 			} else {
@@ -421,6 +425,28 @@ class Lifterlms_Discord_Addon_Admin {
 			} else {
 				update_option( 'ets_lifterlms_discord_welcome_message', false );
 			}
+
+
+			if ( isset( $_POST['ets_lifterlms_discord_quiz_complete'] ) && $_POST['ets_lifterlms_discord_quiz_complete'] != '' ) {
+				update_option( 'ets_lifterlms_discord_quiz_complete', $ets_lifterlms_discord_quiz_complete );
+			} else {
+				update_option( 'ets_lifterlms_discord_quiz_complete', false );
+			}
+
+
+			if ( isset( $_POST['ets_lifterlms_discord_failed_Quiz'] ) && $_POST['ets_lifterlms_discord_failed_Quiz'] != '' ) {
+				update_option( 'ets_lifterlms_discord_failed_Quiz', $ets_lifterlms_discord_failed_Quiz );
+			} else {
+				update_option( 'ets_lifterlms_discord_failed_Quiz', false );
+			}
+
+
+			if ( isset( $_POST['ets_lifterlms_discord_paas_quiz'] ) && $_POST['ets_lifterlms_discord_paas_quiz'] != '' ) {
+				update_option( 'ets_lifterlms_discord_paas_quiz', $ets_lifterlms_discord_paas_quiz );
+			} else {
+				update_option( 'ets_lifterlms_discord_paas_quiz', false );
+			}
+
 
 			if ( isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) {
 				update_option( 'ets_lifterlms_discord_kick_upon_disconnect', true );

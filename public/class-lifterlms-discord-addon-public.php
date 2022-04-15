@@ -198,6 +198,7 @@ class Lifterlms_Discord_Addon_Public {
 }
 	/**
 	 *  initialize discord authentication.
+	 * 
 	 *
 	 */
 
@@ -481,15 +482,17 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 
-
-
 	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning' ) {
 		
 		$discord_user_id                                   = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
 		$discord_bot_token                                 = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
 		$ets_lifterlms_discord_welcome_message            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_welcome_message' ) ) );
-		$ets_lifterlms_discord_cancel_message             = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_cancel_message' ) ) );
+		//$ets_lifterlms_discord_cancel_message             = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_cancel_message' ) ) );
+		$ets_lifterlms_discord_quiz_complete            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_quiz_complete' ) ) );
+		$ets_lifterlms_discord_failed_Quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_failed_Quiz' ) ) );
+		$ets_lifterlms_discord_paas_quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_paas_quiz' ) ) );
 		
+
 		// Check if DM channel is already created for the user.
 		$user_dm = get_user_meta( $user_id, '_ets_lifterlms_discord_dm_channel', true );
 
@@ -503,9 +506,25 @@ class Lifterlms_Discord_Addon_Public {
 
 		
 		if ( 'welcome' === $type ) {
-			update_user_meta( $user_id, '_ets_lifterlms_discord_welcome_dm_for_', true);
 			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_welcome_message);
 		}
+
+		if ( 'complete' === $type ) {
+			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_quiz_complete);
+			
+		}
+		if ( 'failed' === $type ) {
+			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_failed_Quiz);
+		}
+
+		if ( 'passed' === $type ) {
+			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_paas_quiz);
+		}
+
+
+		//complte
+		// fail
+		//pass
 		
 		$creat_dm_url = LIFTERLMS_DISCORD_API_URL . '/channels/' . $dm_channel_id . '/messages';
 		$dm_args      = array(
@@ -553,7 +572,6 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 
-
 	function ets_lifterlms_discord_get_formatted_dm( $user_id, $message ) {
 		global $wpdb;
 		$user_obj                             = get_user_by( 'id', $user_id );
@@ -576,12 +594,28 @@ class Lifterlms_Discord_Addon_Public {
 			$MEMBER_USERNAME,
 			$MEMBER_EMAIL,
 			$SITE_URL,
-			$BLOG_NAME,
-			
+			$BLOG_NAME,	
 		);
-	
 		return str_replace( $find, $replace, $message );
 	}
 
+	function ets_lifterlms_complete_quiz( $user_id, $quiz_id ) {
+		if(is_user_logged_in()) {
+	   	$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
+		}
+	}
 
+	function ets_lifterlms_quiz_failed( $user_id, $quiz_id ) {
+		if(is_user_logged_in()) {
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'failed' );
+		}
+	}
+
+	function ets_lifterlms_quiz_passed( $user_id, $quiz_id ) {
+		if(is_user_logged_in()) {
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'passed' );
+		}
+	}
+
+	
 }

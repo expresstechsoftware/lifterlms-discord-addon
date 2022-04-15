@@ -8,6 +8,12 @@ $log_api_res                                  = sanitize_text_field( trim( get_o
 
 $ets_lifterlms_discord_send_welcome_dm            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
 $ets_lifterlms_discord_welcome_message            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_welcome_message' ) ) );
+
+$ets_lifterlms_discord_quiz_complete            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_quiz_complete' ) ) );
+$ets_lifterlms_discord_failed_Quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_failed_Quiz' ) ) );
+$ets_lifterlms_discord_paas_quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_paas_quiz' ) ) );
+
+
 $ets_lifterlms_discord_kick_upon_disconnect       = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_kick_upon_disconnect' ) ) );
 $ets_lifterlms_retry_api_count                    = sanitize_text_field( trim( get_option( 'ets_lifterlms_retry_api_count' ) ) );
 
@@ -43,6 +49,60 @@ $ets_lifterlms_retry_api_count                    = sanitize_text_field( trim( g
         <fieldset>
             <textarea class="ets_lifterlms_discord_welcome_message" name="ets_lifterlms_discord_welcome_message" id="ets_lifterlms_discord_welcome_message" row="25" cols="50">
                     <?php if ( $ets_lifterlms_discord_welcome_message ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_welcome_message ) ) ); } ?>
+            </textarea>
+            <br/>
+            
+		</fieldset>
+    </td>
+</tr>
+
+<tr>
+		<th scope="row">
+            <?php echo __( 'Quiz Complete', 'lifterlms-discord-addon' ); ?>
+        </th>
+	<td> 
+        <fieldset>
+            <textarea class="ets_lifterlms_discord_quiz_complete" name="ets_lifterlms_discord_quiz_complete" id="ets_lifterlms_discord_quiz_complete" row="25" cols="50">
+                    <?php if ( $ets_lifterlms_discord_quiz_complete ) 
+                        { 
+                            echo esc_textarea( $ets_lifterlms_discord_quiz_complete);
+                        } 
+                     ?>
+            </textarea>
+            <br/>
+            
+		</fieldset>
+    </td>
+</tr>
+
+<tr>
+		<th scope="row">
+            <?php echo __( 'failed Quiz', 'lifterlms-discord-addon' ); ?>
+        </th>
+	<td> 
+        <fieldset>
+            <textarea class="ets_lifterlms_discord_failed_Quiz" name="ets_lifterlms_discord_failed_Quiz" id="ets_lifterlms_discord_failed_Quiz" row="25" cols="50">
+                    <?php if ( $ets_lifterlms_discord_failed_Quiz )
+                      {
+                          echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_failed_Quiz ) ) );
+                      }
+                    ?>
+            </textarea>
+            <br/>
+            
+		</fieldset>
+    </td>
+</tr>
+
+
+<tr>
+		<th scope="row">
+            <?php echo __( 'Passed Quiz', 'lifterlms-discord-addon' ); ?>
+        </th>
+	<td> 
+        <fieldset>
+            <textarea class="ets_lifterlms_discord_paas_quiz" name="ets_lifterlms_discord_paas_quiz" id="ets_lifterlms_discord_paas_quiz" row="25" cols="50">
+                    <?php if ( $ets_lifterlms_discord_paas_quiz ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_paas_quiz ) ) ); } ?>
             </textarea>
             <br/>
             
