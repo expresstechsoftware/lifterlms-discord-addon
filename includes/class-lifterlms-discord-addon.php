@@ -193,7 +193,9 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action('lifterlms_quiz_failed', $plugin_public,'ets_lifterlms_quiz_failed', 10, 3);
 		
 		$this->loader->add_action('lifterlms_quiz_passed', $plugin_public,'ets_lifterlms_quiz_passed', 10, 3);
+		$this->loader->add_action('llms_single_quiz_attempt_results_main', $plugin_public,'ets_llms_single_quiz_attempt_results_main', 10, 3);
 	
+		
 	}
 
 	/**

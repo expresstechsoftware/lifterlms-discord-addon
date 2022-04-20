@@ -248,7 +248,7 @@ class Lifterlms_Discord_Addon_Public {
 							$token_expiry_time = $date->getTimestamp();
 							update_user_meta( $user_id, '_ets_lifterlms_discord_expires_in', $token_expiry_time );
 						}
-        /*  function call   */
+        /*  function call */
 						$user_body = $this->get_discord_current_user_id( $access_token );
 						
 						if ( is_array( $user_body ) && array_key_exists( 'discriminator', $user_body ) ) {
@@ -482,7 +482,7 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 
-	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning' ) {
+	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning', $attempt=null ) {
 		
 		$discord_user_id                                   = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
 		$discord_bot_token                                 = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
@@ -491,8 +491,9 @@ class Lifterlms_Discord_Addon_Public {
 		$ets_lifterlms_discord_quiz_complete            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_quiz_complete' ) ) );
 		$ets_lifterlms_discord_failed_Quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_failed_Quiz' ) ) );
 		$ets_lifterlms_discord_paas_quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_paas_quiz' ) ) );
+		$ets_lifterlms_discord_attempt            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_attempt' ) ) );
 		
-
+		
 		// Check if DM channel is already created for the user.
 		$user_dm = get_user_meta( $user_id, '_ets_lifterlms_discord_dm_channel', true );
 
@@ -503,7 +504,6 @@ class Lifterlms_Discord_Addon_Public {
 		} else {
 			$dm_channel_id = $user_dm['id'];
 		}
-
 		
 		if ( 'welcome' === $type ) {
 			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_welcome_message);
@@ -518,13 +518,15 @@ class Lifterlms_Discord_Addon_Public {
 		}
 
 		if ( 'passed' === $type ) {
-			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_paas_quiz);
+			$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_paas_quiz );
 		}
 
+		if ( 'attempt' === $type ) {
+			$message = $this->format_Quiz_DM_message($user_id, $attempt, $ets_lifterlms_discord_attempt);
+			
+			//$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_attempt );
+		}
 
-		//complte
-		// fail
-		//pass
 		
 		$creat_dm_url = LIFTERLMS_DISCORD_API_URL . '/channels/' . $dm_channel_id . '/messages';
 		$dm_args      = array(
@@ -541,7 +543,9 @@ class Lifterlms_Discord_Addon_Public {
 		);
 		$dm_response  = wp_remote_post( $creat_dm_url, $dm_args );
 		$dm_response_body = json_decode( wp_remote_retrieve_body( $dm_response ), true );
+	
 	}
+
 
 	public function ets_lifterlms_discord_create_member_dm_channel( $user_id ) {
 
@@ -572,48 +576,90 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 
-	function ets_lifterlms_discord_get_formatted_dm( $user_id, $message ) {
+	public function ets_lifterlms_discord_get_formatted_dm( $user_id, $message ) {
 		global $wpdb;
 		$user_obj                             = get_user_by( 'id', $user_id );
 		$ets_lifterlms_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
-		//$mapped_role_id                     = $ets_lifterlms_discord_role_mapping[ 'level_id_' . $membership['product_id'] ];
+		
 		$MEMBER_USERNAME                      = $user_obj->user_login;
 		$MEMBER_EMAIL                         = $user_obj->user_email;
 		$SITE_URL  = get_bloginfo( 'url' );
 		$BLOG_NAME = get_bloginfo( 'name' );
-	
+
 		$find    = array(
 			'[MEMBER_USERNAME]',
 			'[MEMBER_EMAIL]',
+			'[QUIZ_GRADE]',
 			'[SITE_URL]',
 			'[BLOG_NAME]',
-			
 		);
+
 		$replace = array(
 			$MEMBER_USERNAME,
 			$MEMBER_EMAIL,
+			$QUIZ_GRADE,
 			$SITE_URL,
 			$BLOG_NAME,	
 		);
 		return str_replace( $find, $replace, $message );
 	}
 
-	function ets_lifterlms_complete_quiz( $user_id, $quiz_id ) {
+    public function format_Quiz_DM_message( $user_id, $attempt, $message ) {
+		$QUIZ_NAME = get_post($attempt->get( 'quiz_id' ))->post_title;
+		$QUIZ_GRADE = $attempt->get( 'grade' );
+		$QUIZ_STATUS = $attempt->get( 'status' );
+		//$QUIZ_CORRECT_ANSWERS = $attempt->get_count( 'correct_answers' );
+		$SITE_URL  = get_bloginfo( 'url' );
+		$BLOG_NAME = get_bloginfo( 'name' );
+
+		$find    = array(
+			'[QUIZ_NAME]',
+			'[QUIZ_GRADE]',
+			'[QUIZ_STATUS]',
+			
+			'[SITE_URL]',
+			'[BLOG_NAME]',
+
+		);
+
+		$replace = array(
+			$QUIZ_NAME,
+			$QUIZ_GRADE,
+			$QUIZ_STATUS,
+			
+			$SITE_URL,
+			$BLOG_NAME,	
+		);
+		//print_r(str_replace( $find, $replace, $message ));
+		return str_replace( $find, $replace, $message );
+	}
+
+	public function ets_lifterlms_complete_quiz( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
 	   	$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
 		}
 	}
 
-	function ets_lifterlms_quiz_failed( $user_id, $quiz_id ) {
+	public function ets_lifterlms_quiz_failed( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
 			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'failed' );
 		}
 	}
 
-	function ets_lifterlms_quiz_passed( $user_id, $quiz_id ) {
+	public function ets_lifterlms_quiz_passed( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
-			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'passed' );
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'passed');
+		}
+	}
+
+	public function ets_llms_single_quiz_attempt_results_main ( $attempt ) {
+		if(is_user_logged_in()) {
+
+			//print_r($attempt);
+			//$this->format_Quiz_DM_message( $user_id, $attempt);
+
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id,  'attempt',$attempt);
 		}
 	}
 

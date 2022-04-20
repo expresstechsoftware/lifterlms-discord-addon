@@ -9,6 +9,9 @@ $log_api_res                                  = sanitize_text_field( trim( get_o
 $ets_lifterlms_discord_send_welcome_dm            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
 $ets_lifterlms_discord_welcome_message            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_welcome_message' ) ) );
 
+$ets_lifterlms_discord_attempt            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_attempt' ) ) );
+
+
 $ets_lifterlms_discord_quiz_complete            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_quiz_complete' ) ) );
 $ets_lifterlms_discord_failed_Quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_failed_Quiz' ) ) );
 $ets_lifterlms_discord_paas_quiz            = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_paas_quiz' ) ) );
@@ -52,6 +55,21 @@ $ets_lifterlms_retry_api_count                    = sanitize_text_field( trim( g
             </textarea>
             <br/>
             
+		</fieldset>
+    </td>
+</tr>
+
+<tr>
+		<th scope="row">
+            <?php echo __( 'Attempt ', 'lifterlms-discord-addon' ); ?>
+        </th>
+	<td> 
+        <fieldset>
+            <textarea class="ets_lifterlms_discord_attempt" name="ets_lifterlms_discord_attempt" id="ets_lifterlms_discord_attempt" row="25" cols="50">
+                    <?php if ( $ets_lifterlms_discord_attempt ) { echo esc_textarea( wp_unslash( stripslashes_deep ( $ets_lifterlms_discord_attempt ) ) ); } ?>
+            </textarea>
+            <br/>
+            <small>Merge fields: [QUIZ_NAME], [QUIZ_GRADE], [QUIZ_STATUS], [QUIZ_CORRECT_ANSWERS], [BLOG_NAME]</small>
 		</fieldset>
     </td>
 </tr>

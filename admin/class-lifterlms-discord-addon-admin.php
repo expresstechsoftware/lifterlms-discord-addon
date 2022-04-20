@@ -394,6 +394,10 @@ class Lifterlms_Discord_Addon_Admin {
 			$ets_lifterlms_log_api_res = isset( $_POST['log_api_res'] ) ? sanitize_textarea_field( trim( $_POST['log_api_res'] ) ) : '';
 			$ets_lifterlms_discord_send_welcome_dm = isset( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_send_welcome_dm'] ) ) : false;
 			$ets_lifterlms_discord_welcome_message = isset( $_POST['ets_lifterlms_discord_welcome_message'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_welcome_message'] ) ) : '';
+			
+			$ets_lifterlms_discord_attempt = isset( $_POST['ets_lifterlms_discord_attempt'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_attempt'] ) ) : '';
+			
+
 			$ets_lifterlms_discord_kick_upon_disconnect = isset( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_kick_upon_disconnect'] ) ) : '';
 			
 			$ets_lifterlms_discord_quiz_complete = isset( $_POST['ets_lifterlms_discord_quiz_complete'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_quiz_complete'] ) ) : '';
@@ -424,6 +428,12 @@ class Lifterlms_Discord_Addon_Admin {
 				update_option( 'ets_lifterlms_discord_welcome_message', $ets_lifterlms_discord_welcome_message );
 			} else {
 				update_option( 'ets_lifterlms_discord_welcome_message', false );
+			}
+
+			if ( isset( $_POST['ets_lifterlms_discord_attempt'] ) && $_POST['ets_lifterlms_discord_attempt'] != '' ) {
+				update_option( 'ets_lifterlms_discord_attempt', $ets_lifterlms_discord_attempt );
+			} else {
+				update_option( 'ets_lifterlms_discord_attempt', false );
 			}
 
 
