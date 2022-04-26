@@ -192,11 +192,33 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action('lifterlms_quiz_completed', $plugin_public,'ets_lifterlms_complete_quiz', 10, 2);
 		$this->loader->add_action('lifterlms_quiz_failed', $plugin_public,'ets_lifterlms_quiz_failed', 10, 3);
 		
+		$this->loader->add_action( 'ets_lifterlms_discord_as_handle_add_member_to_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_add_member_to_guild', 10, 4 );
+		
+		
+		
 		$this->loader->add_action('lifterlms_quiz_passed', $plugin_public,'ets_lifterlms_quiz_passed', 10, 3);
 		$this->loader->add_action('llms_single_quiz_attempt_results_main', $plugin_public,'ets_llms_single_quiz_attempt_results_main', 10, 3);
 	
 		
 	}
+
+	/**
+	 * Define actions which are not in admin or not public
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_common_hooks() {
+		$this->loader->add_filter( 'action_scheduler_queue_runner_batch_size', $this, 'set_job_q_batch_size' );
+		$this->loader->add_filter( 'action_scheduler_queue_runner_concurrent_batches', $this, 'ets_lifterlms_discord_concurrent_batches' );
+		
+	}
+
+
+	public function set_job_q_batch_size( $batch_size ) {
+		
+	}
+
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

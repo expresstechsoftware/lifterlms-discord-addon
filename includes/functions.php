@@ -68,45 +68,29 @@ function ets_lifterlms_discord_log_api_response( $user_id, $api_url = '', $api_a
 }
 
 
-
-
-/*function ets_lifterlms_discord_get_formatted_dm( $user_id, $message ) {
+function ets_lifterlms_discord_get_highest_last_attempt_timestamp() {
 	global $wpdb;
-	$user_obj                             = get_user_by( 'id', $user_id );
-	$ets_lifterlms_discord_role_mapping = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
-	$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
-//	$mapped_role_id                     = $ets_lifterlms_discord_role_mapping[ 'course_id_' . $['course_id'] ];
-	$MEMBER_USERNAME                      = $user_obj->user_login;
-	$MEMBER_EMAIL                         = $user_obj->user_email;
-	
-	if ( is_array( $all_roles ) && array_key_exists( $mapped_role_id, $all_roles ) ) {
-		$MEMBERSHIP_LEVEL = $all_roles[ $mapped_role_id ];
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT aa.last_attempt_gmt FROM ' . $wpdb->prefix . 'actionscheduler_actions as aa INNER JOIN ' . $wpdb->prefix . 'actionscheduler_groups as ag ON aa.group_id = ag.group_id WHERE ag.slug = %s ORDER BY aa.last_attempt_gmt DESC limit 1', LIFTERLMS_DISCORD_AS_GROUP_NAME ), ARRAY_A );
+
+	if ( ! empty( $result ) ) {
+		return strtotime( $result['0']['last_attempt_gmt'] );
 	} else {
-		$MEMBERSHIP_LEVEL = '';
+		return false;
 	}
+}
 
-	$SITE_URL  = get_bloginfo( 'url' );
-	$BLOG_NAME = get_bloginfo( 'name' );
-	  
-	$find    = array(
-		'[MEMBER_USERNAME]',
-		'[MEMBER_EMAIL]',
-		'[MEMBERSHIP_LEVEL]',
-		'[SITE_URL]',
-		'[BLOG_NAME]',
-	);
-	$replace = array(
-		$MEMBER_USERNAME,
-		$MEMBER_EMAIL,
-		$MEMBERSHIP_LEVEL,
-		$SITE_URL,
-		$BLOG_NAME,
-	);
-
-	return str_replace( $find, $replace, $message );
-}*/
-
-
+/**
+ * Get randon integer between a predefined range.
+ *
+ * @param INT $add_upon
+ */
+function ets_lifterlms_discord_get_random_timestamp( $add_upon = '' ) {
+	if ( $add_upon != '' && $add_upon !== false ) {
+		return $add_upon + random_int( 5, 15 );
+	} else {
+		return strtotime( 'now' ) + random_int( 5, 15 );
+	}
+}
 
 
 ?>

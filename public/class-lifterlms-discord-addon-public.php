@@ -75,6 +75,7 @@ class Lifterlms_Discord_Addon_Public {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/lifterlms-discord-addon-public.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . 'public_css', plugin_dir_url( __FILE__ ) . 'css/lifterlms-discord-public.min.css', array(), $this->version, 'all' );
+	
 	}
 
 	/**
@@ -263,8 +264,11 @@ class Lifterlms_Discord_Addon_Public {
 						/*
 							call function ets_lifterlms_discord_add_member_in_guild()
 						 */	
-							$this->ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
 							
+						 	//$this->ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+							$this->ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+							
+						
 						}
 					}
 				}
@@ -278,26 +282,45 @@ class Lifterlms_Discord_Addon_Public {
 	 *  $user_id
 	 *  $access_token
 	 */
-	public function ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
+
+	public function ets_lifterlms_discord_add_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized user', 401 );
+			exit();
+		}
+
+		$allow_none_member = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
+		if ( 'yes' === $allow_none_member ) {
+				
+				as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_as_handle_add_member_to_guild', array( $_ets_lifterlms_discord_user_id, $user_id, $access_token ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
 		
+		}
+	}
+
+
+	public function ets_lifterlms_discord_as_handler_add_member_to_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token ) {
 		if ( get_userdata( $user_id ) === false ) {
 			return;
 		}
-		$user_id                                 = sanitize_text_field( get_current_user_id() );
 		$guild_id                                = sanitize_text_field( get_option( 'ets_lifterlms_discord_server_id' ) );
 		$discord_bot_token                       = sanitize_text_field( get_option( 'ets_lifterlms_discord_bot_token' ) );
 		$default_role                            = sanitize_text_field( get_option( 'ets_lifterlms_discord_default_role_id' ) );
 		$ets_lifterlms_discord_role_mapping    = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
-		$ets_lifterlms_discord_send_welcome_dm = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
-		
+		$ets_lifterlms_discord_send_welcome_d = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
+		//$mapped_role_names                    = array();
 		$mapped_role_id                            = '';
 		$discord_roles                           = array();
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
-		$student                              = llms_get_student();
-		$courses = $student->get_courses();
-        //$mapped_role_names                    = array();
-
 		
+		$student                              = llms_get_student($user_id);
+		$courses = $student->get_courses($user_id);
+
+		// $courses       =     get_posts( 
+		// 	array(
+		// 	'post_type' => 'course', 
+		// 	'post_status' => 'publish')
+		// 	);
+
 		$guilds_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $_ets_lifterlms_discord_user_id;
 		$guild_args             = array(
 			'method'  => 'PUT',
@@ -327,9 +350,9 @@ class Lifterlms_Discord_Addon_Public {
 		}
 
 		// Send welcome message.
-		if ( true == $ets_lifterlms_discord_send_welcome_dm ) {
-			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'welcome' );
-			//as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_send_welcome_dm', array( $user_id, 'welcome' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
+		if ( true == $ets_lifterlms_discord_send_welcome_d ) {
+			//$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'welcome' );
+			as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_send_welcome_dm', array( $user_id, 'welcome' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
 		}
 		
 	} 
@@ -482,7 +505,7 @@ class Lifterlms_Discord_Addon_Public {
 	}
 
 
-	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning', $attempt=null ) {
+	public function ets_lifterlms_discord_handler_send_dm( $user_id, $type = 'warning', $attempt = null ) {
 		
 		$discord_user_id                                   = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
 		$discord_bot_token                                 = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
@@ -523,7 +546,6 @@ class Lifterlms_Discord_Addon_Public {
 
 		if ( 'attempt' === $type ) {
 			$message = $this->format_Quiz_DM_message($user_id, $attempt, $ets_lifterlms_discord_attempt);
-			
 			//$message = $this->ets_lifterlms_discord_get_formatted_dm($user_id, $ets_lifterlms_discord_attempt );
 		}
 
@@ -541,9 +563,11 @@ class Lifterlms_Discord_Addon_Public {
 				)
 			),
 		);
+
+
 		$dm_response  = wp_remote_post( $creat_dm_url, $dm_args );
 		$dm_response_body = json_decode( wp_remote_retrieve_body( $dm_response ), true );
-	
+
 	}
 
 
@@ -590,7 +614,6 @@ class Lifterlms_Discord_Addon_Public {
 		$find    = array(
 			'[MEMBER_USERNAME]',
 			'[MEMBER_EMAIL]',
-			'[QUIZ_GRADE]',
 			'[SITE_URL]',
 			'[BLOG_NAME]',
 		);
@@ -598,18 +621,17 @@ class Lifterlms_Discord_Addon_Public {
 		$replace = array(
 			$MEMBER_USERNAME,
 			$MEMBER_EMAIL,
-			$QUIZ_GRADE,
 			$SITE_URL,
 			$BLOG_NAME,	
 		);
 		return str_replace( $find, $replace, $message );
 	}
 
+
     public function format_Quiz_DM_message( $user_id, $attempt, $message ) {
 		$QUIZ_NAME = get_post($attempt->get( 'quiz_id' ))->post_title;
 		$QUIZ_GRADE = $attempt->get( 'grade' );
 		$QUIZ_STATUS = $attempt->get( 'status' );
-		//$QUIZ_CORRECT_ANSWERS = $attempt->get_count( 'correct_answers' );
 		$SITE_URL  = get_bloginfo( 'url' );
 		$BLOG_NAME = get_bloginfo( 'name' );
 
@@ -617,7 +639,6 @@ class Lifterlms_Discord_Addon_Public {
 			'[QUIZ_NAME]',
 			'[QUIZ_GRADE]',
 			'[QUIZ_STATUS]',
-			
 			'[SITE_URL]',
 			'[BLOG_NAME]',
 
@@ -627,17 +648,15 @@ class Lifterlms_Discord_Addon_Public {
 			$QUIZ_NAME,
 			$QUIZ_GRADE,
 			$QUIZ_STATUS,
-			
 			$SITE_URL,
 			$BLOG_NAME,	
 		);
-		//print_r(str_replace( $find, $replace, $message ));
 		return str_replace( $find, $replace, $message );
 	}
 
 	public function ets_lifterlms_complete_quiz( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
-	   	$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
+	    	$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
 		}
 	}
 
@@ -655,13 +674,10 @@ class Lifterlms_Discord_Addon_Public {
 
 	public function ets_llms_single_quiz_attempt_results_main ( $attempt ) {
 		if(is_user_logged_in()) {
-
 			//print_r($attempt);
 			//$this->format_Quiz_DM_message( $user_id, $attempt);
-
-			$this->ets_lifterlms_discord_handler_send_dm( $user_id,  'attempt',$attempt);
+			$this->ets_lifterlms_discord_handler_send_dm( $user_id,  'attempt', $attempt);
 		}
 	}
-
 	
 }
