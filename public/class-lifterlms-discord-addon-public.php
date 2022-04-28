@@ -288,12 +288,9 @@ class Lifterlms_Discord_Addon_Public {
 			wp_send_json_error( 'Unauthorized user', 401 );
 			exit();
 		}
-
 		$allow_none_member = sanitize_text_field( get_option( 'ets_lifterlms_allow_none_member' ) );
-		if ( 'yes' === $allow_none_member ) {
-				
+		if ( 'yes' === $allow_none_member ) {	
 				as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_as_handle_add_member_to_guild', array( $_ets_lifterlms_discord_user_id, $user_id, $access_token ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
-		
 		}
 	}
 
@@ -306,20 +303,13 @@ class Lifterlms_Discord_Addon_Public {
 		$discord_bot_token                       = sanitize_text_field( get_option( 'ets_lifterlms_discord_bot_token' ) );
 		$default_role                            = sanitize_text_field( get_option( 'ets_lifterlms_discord_default_role_id' ) );
 		$ets_lifterlms_discord_role_mapping    = json_decode( get_option( 'ets_lifterlms_discord_role_mapping' ), true );
-		$ets_lifterlms_discord_send_welcome_d = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
+		$ets_lifterlms_discord_send_welcome_dm = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_send_welcome_dm' ) ) );
 		//$mapped_role_names                    = array();
-		$mapped_role_id                            = '';
+		//$mapped_role_id                            = '';
 		$discord_roles                           = array();
 		$all_roles                            = json_decode( get_option( 'ets_lifterlms_discord_all_roles' ), true );
-		
 		$student                              = llms_get_student($user_id);
-		$courses = $student->get_courses($user_id);
-
-		// $courses       =     get_posts( 
-		// 	array(
-		// 	'post_type' => 'course', 
-		// 	'post_status' => 'publish')
-		// 	);
+		$courses = $student->get_courses();
 
 		$guilds_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $_ets_lifterlms_discord_user_id;
 		$guild_args             = array(
@@ -350,7 +340,7 @@ class Lifterlms_Discord_Addon_Public {
 		}
 
 		// Send welcome message.
-		if ( true == $ets_lifterlms_discord_send_welcome_d ) {
+		if ( true == $ets_lifterlms_discord_send_welcome_dm ) {
 			//$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'welcome' );
 			as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_discord_send_welcome_dm', array( $user_id, 'welcome' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
 		}
@@ -641,7 +631,6 @@ class Lifterlms_Discord_Addon_Public {
 			'[QUIZ_STATUS]',
 			'[SITE_URL]',
 			'[BLOG_NAME]',
-
 		);
 
 		$replace = array(
@@ -656,7 +645,9 @@ class Lifterlms_Discord_Addon_Public {
 
 	public function ets_lifterlms_complete_quiz( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
-	    	$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
+	    	//$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'complete' );
+			as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_complete_quiz', array( $user_id, 'complete' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
+
 		}
 	}
 
@@ -668,7 +659,10 @@ class Lifterlms_Discord_Addon_Public {
 
 	public function ets_lifterlms_quiz_passed( $user_id, $quiz_id ) {
 		if(is_user_logged_in()) {
-			$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'passed');
+			//$this->ets_lifterlms_discord_handler_send_dm( $user_id, 'passed');
+
+			as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), 'ets_lifterlms_complete_quiz', array( $user_id, 'passed' ), LIFTERLMS_DISCORD_AS_GROUP_NAME );
+
 		}
 	}
 
@@ -678,6 +672,15 @@ class Lifterlms_Discord_Addon_Public {
 			//$this->format_Quiz_DM_message( $user_id, $attempt);
 			$this->ets_lifterlms_discord_handler_send_dm( $user_id,  'attempt', $attempt);
 		}
+	}
+
+
+	public function ets_lifterlms_discord_reschedule_failed_action( $action_id, $e, $context ) {
+		
+		print_r($action_id);
+		print_r($e);
+		print_r($context);
+		
 	}
 	
 }

@@ -188,18 +188,31 @@ class Lifterlms_Discord_Addon {
 		$this->loader->add_action('init',$plugin_public,'ets_lifterlms_discord_login');
 		$this->loader->add_action( 'wp_ajax_ets_lifterlms_disconnect_from_discord', $plugin_public, 'ets_lifterlms_disconnect_from_discord' );
 		$this->loader->add_action( 'ets_lifterlms_discord_as_handler_delete_member_from_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_delete_member_from_guild', 10, 3 );
-		$this->loader->add_action( 'ets_lifterlms_discord_send_welcome_dm', $this, 'ets_lifterlms_discord_handler_send_dm', 10, 3 );
+		//$this->loader->add_action( 'ets_lifterlms_discord_send_welcome_dm', $this, 'ets_lifterlms_discord_handler_send_dm', 10, 3 );
+		
+		$this->loader->add_action( 'ets_lifterlms_discord_send_welcome_dm', $plugin_public, 'ets_lifterlms_discord_handler_send_dm', 10, 3 );
+
+		
 		$this->loader->add_action('lifterlms_quiz_completed', $plugin_public,'ets_lifterlms_complete_quiz', 10, 2);
+		$this->loader->add_action('ets_lifterlms_complete_quiz', $plugin_public,'ets_lifterlms_discord_handler_send_dm', 10, 2);
+		
+		
 		$this->loader->add_action('lifterlms_quiz_failed', $plugin_public,'ets_lifterlms_quiz_failed', 10, 3);
 		
-		$this->loader->add_action( 'ets_lifterlms_discord_as_handle_add_member_to_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_add_member_to_guild', 10, 4 );
+		$this->loader->add_action( 'ets_lifterlms_discord_as_handle_add_member_to_guild', $plugin_public, 'ets_lifterlms_discord_as_handler_add_member_to_guild', 10, 3 );
 		
 		
+		$this->loader->add_action('ets_lifterlms_complete_quiz', $plugin_public,'ets_lifterlms_discord_handler_send_dm', 10, 3);
 		
 		$this->loader->add_action('lifterlms_quiz_passed', $plugin_public,'ets_lifterlms_quiz_passed', 10, 3);
-		$this->loader->add_action('llms_single_quiz_attempt_results_main', $plugin_public,'ets_llms_single_quiz_attempt_results_main', 10, 3);
+		
+		
 	
 		
+		$this->loader->add_action('llms_single_quiz_attempt_results_main', $plugin_public,'ets_llms_single_quiz_attempt_results_main', 10, 3);
+	
+		$this->loader->add_action( 'action_scheduler_failed_execution', $this, 'ets_lifterlms_discord_reschedule_failed_action', 10, 3 );
+	
 	}
 
 	/**
@@ -209,15 +222,31 @@ class Lifterlms_Discord_Addon {
 	 * @access   private
 	 */
 	private function define_common_hooks() {
-		$this->loader->add_filter( 'action_scheduler_queue_runner_batch_size', $this, 'set_job_q_batch_size' );
-		$this->loader->add_filter( 'action_scheduler_queue_runner_concurrent_batches', $this, 'ets_lifterlms_discord_concurrent_batches' );
 		
 	}
 
 
-	public function set_job_q_batch_size( $batch_size ) {
+	public function ets_lifterlms_discord_reschedule_failed_action( $action_id, $e, $context ) {
+		
+		$action_data = ets_lifterlms_discord_as_get_action_data( $action_id );
+		
+		if ( $action_data !== false ) {
+			$hook              = $action_data['hook'];
+			$args              = json_decode( $action_data['args'] );
+			$retry_failed_api  = sanitize_text_field( trim( get_option( 'retry_failed_api' ) ) );
+			$hook_failed_count = ets_lifterlms_discord_count_of_hooks_failures( $hook );
+			$retry_api_count   = absint( sanitize_text_field( trim( get_option( 'ets_lifterlms_retry_api_count' ) ) ) );
+			if($retry_failed_api == true){
+				if ( $hook_failed_count < $retry_api_count && $action_data['as_group'] == LIFTERLMS_DISCORD_AS_GROUP_NAME && $action_data['status'] = 'failed' ) {
+					as_schedule_single_action( ets_lifterlms_discord_get_random_timestamp( ets_lifterlms_discord_get_highest_last_attempt_timestamp() ), $hook, array_values( $args ), 'ets-lifterlms-discord' );
+				}
+			}
+		}
 		
 	}
+
+
+	
 
 
 	/**

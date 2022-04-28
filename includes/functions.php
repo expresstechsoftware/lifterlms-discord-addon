@@ -93,4 +93,38 @@ function ets_lifterlms_discord_get_random_timestamp( $add_upon = '' ) {
 }
 
 
+
+/**
+ * Get Action data from table `actionscheduler_actions`
+ *
+ * @param INT $action_id
+ */
+function ets_lifterlms_discord_as_get_action_data( $action_id ) {
+	global $wpdb;
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT aa.hook, aa.status, aa.args, ag.slug AS as_group FROM ' . $wpdb->prefix . 'actionscheduler_actions as aa INNER JOIN ' . $wpdb->prefix . 'actionscheduler_groups as ag ON aa.group_id=ag.group_id WHERE `action_id`=%d AND ag.slug=%s', $action_id, LIFTERLMS_DISCORD_AS_GROUP_NAME ), ARRAY_A );
+
+	if ( ! empty( $result ) ) {
+		return $result[0];
+	} else {
+		return false;
+	}
+}
+
+
+/**
+ * Get how many times a hook is failed in a particular day.
+ *
+ * @param STRING $hook
+ */
+function ets_lifterlms_discord_count_of_hooks_failures( $hook ) {
+	global $wpdb;
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT count(last_attempt_gmt) as hook_failed_count FROM ' . $wpdb->prefix . 'actionscheduler_actions WHERE `hook`=%s AND status="failed" AND DATE(last_attempt_gmt) = %s', $hook, date( 'Y-m-d' ) ), ARRAY_A );
+	if ( ! empty( $result ) ) {
+		return $result['0']['hook_failed_count'];
+	} else {
+		return false;
+	}
+}
+
+
 ?>
