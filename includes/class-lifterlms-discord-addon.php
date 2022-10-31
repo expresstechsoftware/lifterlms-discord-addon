@@ -72,7 +72,7 @@ class Lifterlms_Discord_Addon {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'lifterlms-discord-addon';
+		$this->plugin_name = 'connect-lifterlms-discord';
 
 		$this->load_dependencies();
 		$this->set_locale();
