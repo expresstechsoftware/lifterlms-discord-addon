@@ -271,11 +271,9 @@ class Lifterlms_Discord_Addon_Public {
 							$user_body = $this->get_discord_current_user( $access_token );
 
 							if ( is_array( $user_body ) && array_key_exists( 'discriminator', $user_body ) ) {
-								$discord_user_number           = $user_body['discriminator'];
 								$discord_user_name             = $user_body['username'];
 								$discord_user_avatar           = $user_body['avatar'];
-								$discord_user_name_with_number = $discord_user_name . '#' . $discord_user_number;
-								update_user_meta( $user_id, '_ets_lifterlms_discord_username', $discord_user_name_with_number );
+								update_user_meta( $user_id, '_ets_lifterlms_discord_username', $discord_user_name );
 								update_user_meta( $user_id, '_ets_lifterlms_discord_avatar', $discord_user_avatar );
 							}
 							if ( is_array( $user_body ) && array_key_exists( 'id', $user_body ) ) {
@@ -293,12 +291,64 @@ class Lifterlms_Discord_Addon_Public {
 								}
 								update_user_meta( $user_id, '_ets_lifterlms_discord_user_id', $_ets_lifterlms_discord_user_id );
 								$this->add_discord_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
+								//update nick name in discord.
+								$this->ets_lifterlms_discord_update_discord_nickname_from_wp_user($user_id);
 							}
 						}
 					}
 				}
 			}
 		}
+
+	}
+
+
+	/**
+	 * Update discord user nick name. 
+	 * @param INT  $user_id
+	*/
+	public function ets_lifterlms_discord_update_discord_nickname_from_wp_user($user_id){
+		$guild_id                           = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_server_id' ) ) );
+		$discord_bot_token                  = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_bot_token' ) ) );
+		$ets_lifterlms_discord_user_id    = sanitize_text_field( trim( get_user_meta( $user_id, '_ets_lifterlms_discord_user_id', true ) ) );
+		$ets_lifter_update_discord_nickname             = sanitize_text_field( trim( get_option( 'ets_lifterlms_update_discord_nickname' ) ) );
+
+		$guilds_patch_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $ets_lifterlms_discord_user_id;
+
+		// Check if advanced settings allow updating nickname
+		if(!$ets_lifterlms_update_discord_nickname || $ets_lifterlms_update_discord_nickname=='0'){
+			return false;
+		}
+
+		$user_info  = get_userdata($user_id);
+		$first_name = $user_info->first_name;
+		$last_name  = $user_info->last_name;
+		$nickname   = $user_info->nickname; 
+	
+		// Determine which name to use
+		if (!empty($first_name) && !empty($last_name)) {
+			$discord_nickname = $first_name . ' ' . $last_name;
+		} elseif (!empty($first_name)) {
+			$discord_nickname = $first_name;
+		} elseif (!empty($nickname)) {
+			$discord_nickname = $nickname;
+		} else {
+			return; //exit function and do nothing.
+		}
+
+		// Prepare the request arguments
+		$args = array(
+			'method'  => 'PATCH',
+			'headers' => array(
+				'Authorization' => 'Bot ' . $discord_bot_token,
+				'Content-Type'  => 'application/json',
+			),
+			'body' => json_encode(array('nick' => $discord_nickname)),
+		);
+
+		$response = wp_remote_request($guilds_patch_memeber_api_url, $args);
+
+		//error_log( print_r( $response, true) );
 
 	}
 
