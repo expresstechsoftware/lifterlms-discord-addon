@@ -114,7 +114,7 @@ class Lifterlms_Discord_Addon_Public {
 		 * class.
 		 */
 		$min_js = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? '' : '.min';
-		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-public' . $min_js . '.js', array( 'jquery' ), $this->version, false );
+		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/lifterlms-discord-addon-public' . $min_js . '.js', array( 'jquery' ), $this->version, true );
 		$script_params = array(
 			'admin_ajax'                  => admin_url( 'admin-ajax.php' ),
 			'permissions_const'           => LIFTERLMS_DISCORD_BOT_PERMISSIONS,
@@ -291,8 +291,6 @@ class Lifterlms_Discord_Addon_Public {
 								}
 								update_user_meta( $user_id, '_ets_lifterlms_discord_user_id', $_ets_lifterlms_discord_user_id );
 								$this->add_discord_member_in_guild( $_ets_lifterlms_discord_user_id, $user_id, $access_token );
-								//update nick name in discord.
-								$this->ets_lifterlms_discord_update_discord_nickname_from_wp_user($user_id);
 							}
 						}
 					}
@@ -316,7 +314,7 @@ class Lifterlms_Discord_Addon_Public {
 		$guilds_patch_memeber_api_url = LIFTERLMS_DISCORD_API_URL . 'guilds/' . $guild_id . '/members/' . $ets_lifterlms_discord_user_id;
 
 		// Check if advanced settings allow updating nickname
-		if(!$ets_lifterlms_update_discord_nickname || $ets_lifterlms_update_discord_nickname=='0'){
+		if(!$ets_lifter_update_discord_nickname || $ets_lifter_update_discord_nickname=='0'){
 			return false;
 		}
 
@@ -335,6 +333,7 @@ class Lifterlms_Discord_Addon_Public {
 		} else {
 			return; //exit function and do nothing.
 		}
+		
 
 		// Prepare the request arguments
 		$args = array(
@@ -348,7 +347,7 @@ class Lifterlms_Discord_Addon_Public {
 
 		$response = wp_remote_request($guilds_patch_memeber_api_url, $args);
 
-		//error_log( print_r( $response, true) );
+		error_log( print_r( $response, true) );
 
 	}
 
@@ -480,6 +479,9 @@ class Lifterlms_Discord_Addon_Public {
 			),
 		);
 		$guild_response         = wp_remote_post( $guilds_memeber_api_url, $guild_args );
+
+		//update nick name in discord.
+		$this->ets_lifterlms_discord_update_discord_nickname_from_wp_user($user_id);
 
 		ets_lifterlms_discord_log_api_response( $user_id, $guilds_memeber_api_url, $guild_args, $guild_response );
 		if ( ets_lifterlms_discord_check_api_errors( $guild_response ) ) {

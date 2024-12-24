@@ -16,6 +16,8 @@ $ets_lifterlms_discord_certificate_earned_message = sanitize_text_field( trim( g
 
 $embed_messaging_feature = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_embed_messaging_feature' ) ) );
 
+$ets_lifterlms_update_discord_nickname = sanitize_text_field( trim( get_option( 'ets_lifterlms_update_discord_nickname' ) ) );
+
 $retry_failed_api     = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_retry_failed_api' ) ) );
 $kick_upon_disconnect = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_kick_upon_disconnect' ) ) );
 $retry_api_count      = sanitize_text_field( trim( get_option( 'ets_lifterlms_discord_retry_api_count' ) ) );
@@ -188,6 +190,19 @@ $ets_lifterlms_discord_number_of_courses = sanitize_text_field( trim( get_option
 		 value="1">
 		</fieldset></td>
 	  </tr>
+
+	  <tr>
+		<th scope="row"><?php esc_html_e( 'Sync full name of user to discord nickname', 'connect-lifterlms-discord' ); ?></th>
+		<td> <fieldset>
+		<input name="ets_lifterlms_update_discord_nickname" type="checkbox" id="ets_lifterlms_update_discord_nickname" 
+		<?php
+		if ( $ets_lifterlms_update_discord_nickname == true ) {
+			echo esc_attr( 'checked="checked"' ); }
+		?>
+		 value="1">
+		</fieldset></td>
+	  </tr>
+
 	<tr>
 		<th scope="row"><?php esc_html_e( 'How many times a failed API call should get re-try', 'connect-lifterlms-discord' ); ?></th>
 		<td> 

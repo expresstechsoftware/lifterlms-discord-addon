@@ -436,6 +436,7 @@ class Lifterlms_Discord_Addon_Admin {
 			$log_api_res                                      = isset( $_POST['log_api_res'] ) ? sanitize_textarea_field( trim( $_POST['log_api_res'] ) ) : '';
 			$ets_lifterlms_discord_number_of_courses          = isset( $_POST['ets_lifterlms_discord_number_of_courses'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_discord_number_of_courses'] ) ) : 20;
 			$ets_current_url                                  = sanitize_text_field( trim( $_POST['current_url'] ) );
+			$ets_lifterlms_update_discord_nickname                             = isset( $_POST['ets_lifterlms_update_discord_nickname'] ) ? sanitize_textarea_field( trim( $_POST['ets_lifterlms_update_discord_nickname'] ) ) : '';
 
 		if ( isset( $_POST['ets_lifterlms_discord_advance_settings_nonce'] ) && wp_verify_nonce( $_POST['ets_lifterlms_discord_advance_settings_nonce'], 'lifterlms_discord_advance_settings_nonce' ) ) {
 			if ( isset( $_POST['adv_submit'] ) ) {
@@ -503,6 +504,13 @@ class Lifterlms_Discord_Addon_Admin {
 				} else {
 					update_option( 'ets_lifterlms_discord_kick_upon_disconnect', false );
 				}
+
+				if ( isset( $_POST['ets_lifterlms_update_discord_nickname'] ) ) {
+					update_option( 'ets_lifterlms_update_discord_nickname', true );
+				} else {
+					update_option( 'ets_lifterlms_update_discord_nickname', false );
+				}
+
 				if ( isset( $_POST['ets_lifterlms_retry_api_count'] ) ) {
 					if ( $retry_api_count < 1 ) {
 						update_option( 'ets_lifterlms_discord_retry_api_count', 1 );

@@ -3,7 +3,7 @@
 
 	/*Call-back on disconnect from discord and kick student if the case */
 	$('#lifterlms-discord-addon-disconnect-discord').on('click', function (e) {
-            
+            console.log('ok');
 		e.preventDefault();
 		var userId = $(this).data('user-id');
 		$.ajax({
